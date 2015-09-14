@@ -28,6 +28,7 @@ import com.sigpwned.jsonification.exception.ParseJsonException;
 public class JsonEventParser implements AutoCloseable {
     private final JsonParser parser;
     private JsonValueFactory factory;
+    private String nextName;
     
     public JsonEventParser(String text) {
         this(new JsonParser(text));
@@ -54,6 +55,10 @@ public class JsonEventParser implements AutoCloseable {
         this.factory = factory;
     }
     
+    public void nextName(String nextName) {
+        this.nextName = nextName;
+    }
+    
     public JsonEvent openObject() throws IOException {
         JsonEvent e=next();
         if(e.getType() != JsonEvent.Type.OPEN_OBJECT)
@@ -63,6 +68,7 @@ public class JsonEventParser implements AutoCloseable {
     
     public JsonEvent openObject(String name) throws IOException {
         JsonEvent e=openObject();
+        name = name(name);
         if(!Objects.equals(name, e.getName()))
             throw parseException(name, e.getName());
         return e;
@@ -70,8 +76,8 @@ public class JsonEventParser implements AutoCloseable {
     
     public JsonEvent closeObject() throws IOException {
         JsonEvent e=next();
-        if(e.getType() != JsonEvent.Type.OPEN_OBJECT)
-            throw parseException(JsonEvent.Type.OPEN_OBJECT, e.getType());
+        if(e.getType() != JsonEvent.Type.CLOSE_OBJECT)
+            throw parseException(JsonEvent.Type.CLOSE_OBJECT, e.getType());
         return e;
     }
     
@@ -84,6 +90,7 @@ public class JsonEventParser implements AutoCloseable {
     
     public JsonEvent openArray(String name) throws IOException {
         JsonEvent e=openArray();
+        name = name(name);
         if(!Objects.equals(name, e.getName()))
             throw parseException(name, e.getName());
         return e;
@@ -91,8 +98,8 @@ public class JsonEventParser implements AutoCloseable {
     
     public JsonEvent closeArray() throws IOException {
         JsonEvent e=next();
-        if(e.getType() != JsonEvent.Type.OPEN_ARRAY)
-            throw parseException(JsonEvent.Type.OPEN_ARRAY, e.getType());
+        if(e.getType() != JsonEvent.Type.CLOSE_ARRAY)
+            throw parseException(JsonEvent.Type.CLOSE_ARRAY, e.getType());
         return e;
     }
     
@@ -104,7 +111,8 @@ public class JsonEventParser implements AutoCloseable {
     }
     
     public JsonEvent scalar(String name) throws IOException {
-        JsonEvent e=openArray();
+        JsonEvent e=scalar();
+        name = name(name);
         if(!Objects.equals(name, e.getName()))
             throw parseException(name, e.getName());
         return e;
@@ -118,10 +126,33 @@ public class JsonEventParser implements AutoCloseable {
     }
     
     public JsonEvent nil(String name) throws IOException {
-        JsonEvent e=openArray();
+        JsonEvent e=nil();
+        name = name(name);
         if(!Objects.equals(name, e.getName()))
             throw parseException(name, e.getName());
         return e;
+    }
+    
+    private String name(String name) {
+        String result;
+        
+        if(nextName!=null && name!=null) {
+            if(nextName.equals(name))
+                result = nextName;
+            else
+                throw new ParseJsonException("Disagreement between nextName "+nextName+" and name "+name);
+        } else
+        if(nextName != null)
+            result = nextName;
+        else
+        if(name != null)
+            result = name;
+        else
+            result = null;
+        
+        nextName = null;
+        
+        return result;
     }
     
     private static ParseJsonException parseException(String expected, String observed) {

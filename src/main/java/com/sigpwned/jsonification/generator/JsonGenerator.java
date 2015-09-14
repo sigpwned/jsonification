@@ -71,7 +71,7 @@ public class JsonGenerator implements AutoCloseable {
         if(top.type != Scope.Type.OBJECT)
             throw new GenerateJsonException("cannot close object in "+top+" scope");
         writer.write("}");
-        top.count = top.count+1;
+        scope().count += 1;
     }
     
     public void openArray() throws IOException {
@@ -92,7 +92,7 @@ public class JsonGenerator implements AutoCloseable {
         if(top.type != Scope.Type.ARRAY)
             throw new GenerateJsonException("cannot close object in "+top+" scope");
         writer.write("]");
-        top.count = top.count+1;
+        scope().count += 1;
     }
     
     public void scalar(long value) throws IOException {
