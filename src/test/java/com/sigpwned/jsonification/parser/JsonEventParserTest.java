@@ -180,4 +180,32 @@ public class JsonEventParserTest {
             p.scalar().getValue().asString().stringVal();
         }
     }
+
+    @Test
+    public void test7() throws IOException {
+        try (JsonEventParser p=new JsonEventParser("{fact:\"world\"}")) {
+            p.openObject();
+            
+            p.nextName("fact");
+            String value=p.scalar().getValue().asString().stringVal();
+            
+            p.closeObject();
+            
+            assertThat(value, is("world"));
+        }
+    }
+
+    @Test
+    public void test8() throws IOException {
+        try (JsonEventParser p=new JsonEventParser("{hello:\"world\"}")) {
+            p.openObject();
+            
+            p.nextName("hello");
+            String value=p.scalar().getValue().asString().stringVal();
+            
+            p.closeObject();
+            
+            assertThat(value, is("world"));
+        }
+    }
 }
