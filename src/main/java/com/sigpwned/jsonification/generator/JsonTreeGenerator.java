@@ -50,7 +50,7 @@ public class JsonTreeGenerator implements AutoCloseable {
                 @Override
                 public void scalar(String name, String value) {
                     try {
-                        getGenerator().value(name, value);
+                        getGenerator().scalar(name, value);
                     }
                     catch(IOException e) {
                         throw new GeneratorException(e);
@@ -60,7 +60,7 @@ public class JsonTreeGenerator implements AutoCloseable {
                 @Override
                 public void scalar(String name, boolean value) {
                     try {
-                        getGenerator().value(name, value);
+                        getGenerator().scalar(name, value);
                     }
                     catch(IOException e) {
                         throw new GeneratorException(e);
@@ -70,7 +70,7 @@ public class JsonTreeGenerator implements AutoCloseable {
                 @Override
                 public void scalar(String name, double value) {
                     try {
-                        getGenerator().value(name, value);
+                        getGenerator().scalar(name, value);
                     }
                     catch(IOException e) {
                         throw new GeneratorException(e);
@@ -80,7 +80,7 @@ public class JsonTreeGenerator implements AutoCloseable {
                 @Override
                 public void scalar(String name, long value) {
                     try {
-                        getGenerator().value(name, value);
+                        getGenerator().scalar(name, value);
                     }
                     catch(IOException e) {
                         throw new GeneratorException(e);

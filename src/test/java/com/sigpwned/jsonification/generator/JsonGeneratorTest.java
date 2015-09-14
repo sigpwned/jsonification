@@ -32,11 +32,11 @@ public class JsonGeneratorTest {
         try {
             try (JsonGenerator g=new JsonGenerator(w)) {
                 g.openObject();
-                g.value("hello", 123);
-                g.value("world", "My man");
+                g.scalar("hello", 123);
+                g.scalar("world", "My man");
                 g.openArray("dude");
-                g.value("man");
-                g.value("word");
+                g.scalar("man");
+                g.scalar("word");
                 g.closeArray();
                 g.closeObject();
             }
@@ -53,11 +53,11 @@ public class JsonGeneratorTest {
         try {
             try (JsonGenerator g=new JsonGenerator(w)) {
                 g.openObject();
-                g.value("hello", 123);
-                g.value("world", "My man");
+                g.scalar("hello", 123);
+                g.scalar("world", "My man");
                 g.openArray("dude");
-                g.value("man");
-                g.value("word");
+                g.scalar("man");
+                g.scalar("word");
                 g.closeObject();
             }
         }

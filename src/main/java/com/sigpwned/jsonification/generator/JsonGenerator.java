@@ -95,11 +95,11 @@ public class JsonGenerator implements AutoCloseable {
         top.count = top.count+1;
     }
     
-    public void value(long value) throws IOException {
-        value(null, value);
+    public void scalar(long value) throws IOException {
+        scalar(null, value);
     }
     
-    public void value(String name, long value) throws IOException {
+    public void scalar(String name, long value) throws IOException {
         Scope top=scope();
         if(top.type!=Scope.Type.ROOT && top.count!=0)
             writer.write(",");
@@ -108,11 +108,11 @@ public class JsonGenerator implements AutoCloseable {
         top.count = top.count+1;
     }
     
-    public void value(double value) throws IOException {
-        value(null, value);
+    public void scalar(double value) throws IOException {
+        scalar(null, value);
     }
     
-    public void value(String name, double value) throws IOException {
+    public void scalar(String name, double value) throws IOException {
         Scope top=scope();
         if(top.type!=Scope.Type.ROOT && top.count!=0)
             writer.write(",");
@@ -121,11 +121,11 @@ public class JsonGenerator implements AutoCloseable {
         top.count = top.count+1;
     }
     
-    public void value(String value) throws IOException {
-        value(null, value);
+    public void scalar(String value) throws IOException {
+        scalar(null, value);
     }
     
-    public void value(String name, String value) throws IOException {
+    public void scalar(String name, String value) throws IOException {
         Scope top=scope();
         if(top.type!=Scope.Type.ROOT && top.count!=0)
             writer.write(",");
@@ -134,11 +134,11 @@ public class JsonGenerator implements AutoCloseable {
         top.count = top.count+1;
     }
     
-    public void value(boolean value) throws IOException {
-        value(null, value);
+    public void scalar(boolean value) throws IOException {
+        scalar(null, value);
     }
     
-    public void value(String name, boolean value) throws IOException {
+    public void scalar(String name, boolean value) throws IOException {
         Scope top=scope();
         if(top.type!=Scope.Type.ROOT && top.count!=0)
             writer.write(",");

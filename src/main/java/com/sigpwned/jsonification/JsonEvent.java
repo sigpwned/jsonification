@@ -21,7 +21,7 @@ public class JsonEvent {
     public static enum Type {
         OPEN_OBJECT, CLOSE_OBJECT,
         OPEN_ARRAY, CLOSE_ARRAY,
-        VALUE, EOF;
+        SCALAR, NULL, EOF;
     }
     
     private final JsonEvent.Type type;
