@@ -44,7 +44,7 @@ public class JsonTreeGenerator implements AutoCloseable {
         this.generator = generator;
     }
     
-    public void tree(JsonValue value) throws IOException {
+    public void emit(JsonValue value) throws IOException {
         try {
             new JsonWalker(value).walk(new JsonWalker.Handler() {
                 @Override

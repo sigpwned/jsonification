@@ -45,7 +45,7 @@ public class JsonTreeGeneratorTest {
         StringWriter w=new StringWriter();
         try {
             try (JsonTreeGenerator g=new JsonTreeGenerator(w)) {
-                g.tree(a);
+                g.emit(a);
             }
         }
         finally {
