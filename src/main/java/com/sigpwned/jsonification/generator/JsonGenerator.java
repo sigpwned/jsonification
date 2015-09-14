@@ -21,6 +21,10 @@ public class JsonGenerator implements AutoCloseable {
             this.type = type;
             this.count = 0;
         }
+        
+        public String toString() {
+            return type.name();
+        }
     }
     
     private final Writer writer;

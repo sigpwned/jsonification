@@ -21,6 +21,46 @@ public class JsonNullTest {
         JsonNull.NULL.add(0, Json.TRUE);
     }
 
+    @Test(expected=NullJsonException.class)
+    public void addTest3() {
+        JsonNull.NULL.add(true);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void addTest4() {
+        JsonNull.NULL.add(0, true);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void addTest5() {
+        JsonNull.NULL.add(0L);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void addTest6() {
+        JsonNull.NULL.add(0, 0L);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void addTest7() {
+        JsonNull.NULL.add(0.0);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void addTest8() {
+        JsonNull.NULL.add(0, 0.0);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void addTest9() {
+        JsonNull.NULL.add("world");
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void addTest10() {
+        JsonNull.NULL.add(0, "world");
+    }
+
     @Test
     public void asArrayTest() {
         JsonNull.NULL.asArray();
@@ -144,6 +184,46 @@ public class JsonNullTest {
     @Test(expected=NullJsonException.class)
     public void setTest2() {
         JsonNull.NULL.set("hello", Json.TRUE);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void setTest3() {
+        JsonNull.NULL.set(0, true);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void setTest4() {
+        JsonNull.NULL.set("hello", true);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void setTest5() {
+        JsonNull.NULL.set(0, 0L);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void setTest6() {
+        JsonNull.NULL.set("hello", 0L);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void setTest7() {
+        JsonNull.NULL.set(0, 0.0);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void setTest8() {
+        JsonNull.NULL.set("hello", 0.0);
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void setTest9() {
+        JsonNull.NULL.set(0, "world");
+    }
+
+    @Test(expected=NullJsonException.class)
+    public void setTest10() {
+        JsonNull.NULL.set("hello", "world");
     }
 
     @Test(expected=NullJsonException.class)

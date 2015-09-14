@@ -16,6 +16,14 @@ public interface JsonObject extends JsonValue {
     
     public void set(String name, JsonValue value);
     
+    public void set(String name, boolean value);
+    
+    public void set(String name, long value);
+    
+    public void set(String name, double value);
+    
+    public void set(String name, String value);
+    
     public boolean has(String name);
     
     public JsonValue remove(String name);

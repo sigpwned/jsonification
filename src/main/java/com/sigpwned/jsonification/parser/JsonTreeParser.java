@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.sigpwned.jsonification.JsonError;
 import com.sigpwned.jsonification.JsonEvent;
@@ -16,7 +20,12 @@ import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonObject;
 
 public class JsonTreeParser implements AutoCloseable {
+    public static enum KeyOrder {
+        UNORDERED, INSERTION, ALPHABETICAL;
+    }
+    
     private final JsonEventParser parser;
+    private JsonTreeParser.KeyOrder keyOrder; 
     
     public JsonTreeParser(String text) {
         this(new JsonEventParser(text));
@@ -32,17 +41,27 @@ public class JsonTreeParser implements AutoCloseable {
     
     public JsonTreeParser(JsonEventParser parser) {
         this.parser = parser;
+        this.keyOrder = JsonTreeParser.KeyOrder.UNORDERED;
     }
     
     private static class Scope {
         public final String name;
         public final JsonValue value;
+     
         public Scope(String name, JsonValue value) {
             this.name = name;
             this.value = value;
         }
     }
     
+    public JsonTreeParser.KeyOrder getKeyOrder() {
+        return keyOrder;
+    }
+
+    public void setKeyOrder(JsonTreeParser.KeyOrder keyOrder) {
+        this.keyOrder = keyOrder;
+    }
+
     public JsonValue next() throws IOException {
         JsonValue result=null;
         
@@ -56,8 +75,23 @@ public class JsonTreeParser implements AutoCloseable {
             loop: for(JsonEvent e=event;e.getType()!=JsonEvent.Type.EOF;e=getParser().next())
                 switch(e.getType()) {
                 case OPEN_OBJECT:
-                    scopes.add(new Scope(e.getName(), new DefaultJsonObject()));
-                    break;
+                {
+                    Map<String,JsonValue> m;
+                    switch(getKeyOrder()) {
+                    case ALPHABETICAL:
+                        m = new TreeMap<>();
+                        break;
+                    case INSERTION:
+                        m = new LinkedHashMap<>();
+                        break;
+                    case UNORDERED:
+                        m = new HashMap<>();
+                        break;
+                    default:
+                        throw new JsonError("unrecognized key order: "+getKeyOrder());
+                    }
+                    scopes.add(new Scope(e.getName(), new DefaultJsonObject(m)));
+                } break;
                 case CLOSE_OBJECT:
                 {
                     Scope scope=scopes.remove(scopes.size()-1);

@@ -17,8 +17,8 @@ public class DefaultJsonObject extends AbstractJsonValue implements JsonObject {
         this(new LinkedHashMap<String,JsonValue>());
     }
 
-    /* default */ DefaultJsonObject(Map<String,JsonValue> value) {
-        this.values = value;
+    public DefaultJsonObject(Map<String,JsonValue> values) {
+        this.values = values;
     }
     
     @Override
@@ -44,6 +44,26 @@ public class DefaultJsonObject extends AbstractJsonValue implements JsonObject {
         if(value == null)
             throw new NullPointerException();
         values.put(name, value);
+    }
+    
+    @Override
+    public void set(String name, boolean value) {
+        set(name, DefaultJsonBoolean.valueOf(value));
+    }
+
+    @Override
+    public void set(String name, long value) {
+        set(name, DefaultJsonNumber.valueOf(value));
+    }
+
+    @Override
+    public void set(String name, double value) {
+        set(name, DefaultJsonNumber.valueOf(value));
+    }
+
+    @Override
+    public void set(String name, String value) {
+        set(name, DefaultJsonString.valueOf(value));
     }
 
     @Override

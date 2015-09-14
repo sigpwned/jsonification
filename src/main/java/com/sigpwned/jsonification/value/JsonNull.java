@@ -136,5 +136,85 @@ public interface JsonNull extends JsonBoolean, JsonNumber, JsonString, JsonObjec
         public ScalarJsonValue asScalar() {
             return this;
         }
+
+        @Override
+        public void set(String name, boolean value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public void set(String name, long value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public void set(String name, double value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public void set(String name, String value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public void add(boolean value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public void add(long value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public void add(double value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public void add(String value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public void add(int index, boolean value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public void add(int index, long value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public void add(int index, double value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public void add(int index, String value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public JsonValue set(int index, boolean value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public JsonValue set(int index, long value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public JsonValue set(int index, double value) {
+            throw new NullJsonException();
+        }
+
+        @Override
+        public JsonValue set(int index, String value) {
+            throw new NullJsonException();
+        }
     };
 }
