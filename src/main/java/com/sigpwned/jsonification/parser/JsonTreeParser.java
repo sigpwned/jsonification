@@ -4,18 +4,13 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import com.sigpwned.jsonification.JsonError;
 import com.sigpwned.jsonification.JsonEvent;
 import com.sigpwned.jsonification.JsonValue;
+import com.sigpwned.jsonification.JsonValueFactory;
 import com.sigpwned.jsonification.exception.ParseJsonException;
-import com.sigpwned.jsonification.impl.DefaultJsonArray;
-import com.sigpwned.jsonification.impl.DefaultJsonObject;
 import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonObject;
 
@@ -35,12 +30,7 @@ import com.sigpwned.jsonification.value.JsonObject;
  * limitations under the License.
  */
 public class JsonTreeParser implements AutoCloseable {
-    public static enum KeyOrder {
-        UNORDERED, INSERTION, ALPHABETICAL;
-    }
-    
     private final JsonEventParser parser;
-    private JsonTreeParser.KeyOrder keyOrder; 
     
     public JsonTreeParser(String text) {
         this(new JsonEventParser(text));
@@ -56,7 +46,6 @@ public class JsonTreeParser implements AutoCloseable {
     
     public JsonTreeParser(JsonEventParser parser) {
         this.parser = parser;
-        this.keyOrder = JsonTreeParser.KeyOrder.UNORDERED;
     }
     
     private static class Scope {
@@ -68,13 +57,13 @@ public class JsonTreeParser implements AutoCloseable {
             this.value = value;
         }
     }
-    
-    public JsonTreeParser.KeyOrder getKeyOrder() {
-        return keyOrder;
+
+    public JsonValueFactory getFactory() {
+        return getParser().getFactory();
     }
 
-    public void setKeyOrder(JsonTreeParser.KeyOrder keyOrder) {
-        this.keyOrder = keyOrder;
+    public void setFactory(JsonValueFactory factory) {
+        getParser().setFactory(factory);
     }
 
     public JsonValue next() throws IOException {
@@ -90,23 +79,8 @@ public class JsonTreeParser implements AutoCloseable {
             loop: for(JsonEvent e=event;e.getType()!=JsonEvent.Type.EOF;e=getParser().next())
                 switch(e.getType()) {
                 case OPEN_OBJECT:
-                {
-                    Map<String,JsonValue> m;
-                    switch(getKeyOrder()) {
-                    case ALPHABETICAL:
-                        m = new TreeMap<>();
-                        break;
-                    case INSERTION:
-                        m = new LinkedHashMap<>();
-                        break;
-                    case UNORDERED:
-                        m = new HashMap<>();
-                        break;
-                    default:
-                        throw new JsonError("unrecognized key order: "+getKeyOrder());
-                    }
-                    scopes.add(new Scope(e.getName(), new DefaultJsonObject(m)));
-                } break;
+                    scopes.add(new Scope(e.getName(), getFactory().newObject()));
+                    break;
                 case CLOSE_OBJECT:
                 {
                     Scope scope=scopes.remove(scopes.size()-1);
@@ -133,7 +107,7 @@ public class JsonTreeParser implements AutoCloseable {
                     }
                 } break;
                 case OPEN_ARRAY:
-                    scopes.add(new Scope(e.getName(), new DefaultJsonArray()));
+                    scopes.add(new Scope(e.getName(), getFactory().newArray()));
                     break;
                 case CLOSE_ARRAY:
                 {

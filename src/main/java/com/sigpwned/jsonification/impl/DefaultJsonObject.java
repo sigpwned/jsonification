@@ -2,11 +2,14 @@ package com.sigpwned.jsonification.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
+import com.sigpwned.jsonification.JsonError;
 import com.sigpwned.jsonification.JsonValue;
 import com.sigpwned.jsonification.value.JsonObject;
 
@@ -26,10 +29,38 @@ import com.sigpwned.jsonification.value.JsonObject;
  * limitations under the License.
  */
 public final class DefaultJsonObject extends AbstractJsonValue implements JsonObject {
+    public static enum KeyOrder {
+        UNORDERED, INSERTION, ALPHABETICAL;
+    }
+    
+    private static Map<String,JsonValue> map(DefaultJsonObject.KeyOrder keyOrder) {
+        Map<String,JsonValue> result;
+        
+        switch(keyOrder) {
+        case ALPHABETICAL:
+            result = new TreeMap<>();
+            break;
+        case INSERTION:
+            result = new LinkedHashMap<>();
+            break;
+        case UNORDERED:
+            result = new HashMap<>();
+            break;
+        default:
+            throw new JsonError("unrecognized key order: "+keyOrder);
+        }
+        
+        return result;
+    }
+    
     private final Map<String,JsonValue> values;
     
     public DefaultJsonObject() {
-        this(new LinkedHashMap<String,JsonValue>());
+        this(DefaultJsonObject.KeyOrder.UNORDERED);
+    }
+
+    public DefaultJsonObject(DefaultJsonObject.KeyOrder keyOrder) {
+        this(map(keyOrder));
     }
 
     public DefaultJsonObject(Map<String,JsonValue> values) {

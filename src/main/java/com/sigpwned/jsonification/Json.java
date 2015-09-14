@@ -5,10 +5,15 @@ import java.io.Reader;
 import java.io.StringWriter;
 
 import com.sigpwned.jsonification.generator.JsonTreeGenerator;
+import com.sigpwned.jsonification.impl.DefaultJsonValueFactory;
 import com.sigpwned.jsonification.io.IgnoreCloseReader;
 import com.sigpwned.jsonification.parser.JsonTreeParser;
+import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonNull;
+import com.sigpwned.jsonification.value.JsonObject;
 import com.sigpwned.jsonification.value.scalar.JsonBoolean;
+import com.sigpwned.jsonification.value.scalar.JsonNumber;
+import com.sigpwned.jsonification.value.scalar.JsonString;
 
 /**
  * Copyright 2015 Andy Boothe
@@ -75,5 +80,43 @@ public class Json {
             throw new JsonError(e);
         }
         return result.toString();
+    }
+    
+    private static JsonValueFactory factory=new DefaultJsonValueFactory();
+    
+    public static JsonValueFactory getDefaultValueFactory() {
+        return factory;
+    }
+    
+    public static void setDefaultValueFactory(JsonValueFactory factory) {
+        Json.factory = factory;
+    }
+    
+    public static JsonObject newObject() {
+        return factory.newObject();
+    }
+
+    public static JsonArray newArray() {
+        return factory.newArray();
+    }
+
+    public static JsonBoolean newValue(boolean value) {
+        return factory.newValue(value);
+    }
+
+    public static JsonNumber newValue(long value) {
+        return factory.newValue(value);
+    }
+
+    public static JsonNumber newValue(double value) {
+        return factory.newValue(value);
+    }
+
+    public static JsonString newValue(String value) {
+        return factory.newValue(value);
+    }
+
+    public static JsonNull newNull() {
+        return factory.newNull();
     }
 }

@@ -5,13 +5,12 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.LinkedHashMap;
 
 import org.junit.Test;
 
-import com.sigpwned.jsonification.JsonValue;
-import com.sigpwned.jsonification.impl.DefaultJsonArray;
+import com.sigpwned.jsonification.JsonValueFactory;
 import com.sigpwned.jsonification.impl.DefaultJsonObject;
+import com.sigpwned.jsonification.impl.DefaultJsonValueFactory;
 import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonObject;
 
@@ -33,11 +32,13 @@ import com.sigpwned.jsonification.value.JsonObject;
 public class JsonTreeGeneratorTest {
     @Test
     public void test1() throws IOException {
-        JsonObject o=new DefaultJsonObject(new LinkedHashMap<String,JsonValue>());
+        JsonValueFactory f=new DefaultJsonValueFactory(DefaultJsonObject.KeyOrder.INSERTION);
+        
+        JsonObject o=f.newObject();
         o.set("hello", "world");
         o.set("dude", 123L);
         
-        JsonArray a=new DefaultJsonArray();
+        JsonArray a=f.newArray();
         a.add(true);
         a.add(o);
         a.add("america");

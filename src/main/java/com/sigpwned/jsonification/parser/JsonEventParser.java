@@ -6,9 +6,7 @@ import java.io.Reader;
 
 import com.sigpwned.jsonification.Json;
 import com.sigpwned.jsonification.JsonEvent;
-import com.sigpwned.jsonification.impl.DefaultJsonBoolean;
-import com.sigpwned.jsonification.impl.DefaultJsonNumber;
-import com.sigpwned.jsonification.impl.DefaultJsonString;
+import com.sigpwned.jsonification.JsonValueFactory;
 
 /**
  * Copyright 2015 Andy Boothe
@@ -27,6 +25,7 @@ import com.sigpwned.jsonification.impl.DefaultJsonString;
  */
 public class JsonEventParser implements AutoCloseable {
     private final JsonParser parser;
+    private JsonValueFactory factory;
     
     public JsonEventParser(String text) {
         this(new JsonParser(text));
@@ -42,29 +41,38 @@ public class JsonEventParser implements AutoCloseable {
     
     public JsonEventParser(JsonParser parser) {
         this.parser = parser;
+        this.factory = Json.getDefaultValueFactory();
     }
     
+    public JsonValueFactory getFactory() {
+        return factory;
+    }
+
+    public void setFactory(JsonValueFactory factory) {
+        this.factory = factory;
+    }
+
     public JsonEvent next() throws IOException {
         final JsonEvent[] result=new JsonEvent[1];
         getParser().next(new JsonParser.Handler() {
             @Override
             public void scalar(String name, String value) {
-                result[0] = new JsonEvent(JsonEvent.Type.VALUE, name, DefaultJsonString.valueOf(value));
+                result[0] = new JsonEvent(JsonEvent.Type.VALUE, name, getFactory().newValue(value));
             }
             
             @Override
             public void scalar(String name, boolean value) {
-                result[0] = new JsonEvent(JsonEvent.Type.VALUE, name, DefaultJsonBoolean.valueOf(value));
+                result[0] = new JsonEvent(JsonEvent.Type.VALUE, name, getFactory().newValue(value));
             }
             
             @Override
             public void scalar(String name, double value) {
-                result[0] = new JsonEvent(JsonEvent.Type.VALUE, name, DefaultJsonNumber.valueOf(value));
+                result[0] = new JsonEvent(JsonEvent.Type.VALUE, name, getFactory().newValue(value));
             }
             
             @Override
             public void scalar(String name, long value) {
-                result[0] = new JsonEvent(JsonEvent.Type.VALUE, name, DefaultJsonNumber.valueOf(value));
+                result[0] = new JsonEvent(JsonEvent.Type.VALUE, name, getFactory().newValue(value));
             }
             
             @Override
@@ -79,7 +87,7 @@ public class JsonEventParser implements AutoCloseable {
             
             @Override
             public void nil(String name) {
-                result[0] = new JsonEvent(JsonEvent.Type.VALUE, name, Json.NULL);
+                result[0] = new JsonEvent(JsonEvent.Type.VALUE, name, getFactory().newNull());
             }
             
             @Override
