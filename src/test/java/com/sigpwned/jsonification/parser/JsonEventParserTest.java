@@ -9,7 +9,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.sigpwned.jsonification.JsonEvent;
-import com.sigpwned.jsonification.parser.JsonEventParser;
+import com.sigpwned.jsonification.exception.ParseJsonException;
 
 /**
  * Copyright 2015 Andy Boothe
@@ -154,6 +154,30 @@ public class JsonEventParserTest {
             assertThat(e3.getType(), is(JsonEvent.Type.EOF));
             assertThat(e3.getName(), nullValue());
             assertThat(e3.getValue(), nullValue());
+        }
+    }
+
+    @Test
+    public void test5() throws IOException {
+        try (JsonEventParser p=new JsonEventParser("{\"hello\":\"world\"}")) {
+            p.openObject();
+            
+            p.nextName("hello");
+            String value=p.scalar().getValue().asString().stringVal();
+            
+            p.closeObject();
+            
+            assertThat(value, is("world"));
+        }
+    }
+
+    @Test(expected=ParseJsonException.class)
+    public void test6() throws IOException {
+        try (JsonEventParser p=new JsonEventParser("{\"hello\":\"world\"}")) {
+            p.openObject();
+            
+            // This will fail since we didn't provide the name!
+            p.scalar().getValue().asString().stringVal();
         }
     }
 }

@@ -60,17 +60,19 @@ public class JsonEventParser implements AutoCloseable {
     }
     
     public JsonEvent openObject() throws IOException {
-        JsonEvent e=next();
-        if(e.getType() != JsonEvent.Type.OPEN_OBJECT)
-            throw parseException(JsonEvent.Type.OPEN_OBJECT, e.getType());
-        return e;
+        return openObject(null);
     }
     
     public JsonEvent openObject(String name) throws IOException {
-        JsonEvent e=openObject();
+        JsonEvent e=next();
+        
+        if(e.getType() != JsonEvent.Type.OPEN_OBJECT)
+            throw parseException(JsonEvent.Type.OPEN_OBJECT, e.getType());
+
         name = name(name);
         if(!Objects.equals(name, e.getName()))
             throw parseException(name, e.getName());
+        
         return e;
     }
     
@@ -82,17 +84,19 @@ public class JsonEventParser implements AutoCloseable {
     }
     
     public JsonEvent openArray() throws IOException {
-        JsonEvent e=next();
-        if(e.getType() != JsonEvent.Type.OPEN_ARRAY)
-            throw parseException(JsonEvent.Type.OPEN_ARRAY, e.getType());
-        return e;
+        return openArray(null);
     }
     
     public JsonEvent openArray(String name) throws IOException {
-        JsonEvent e=openArray();
+        JsonEvent e=next();
+        
+        if(e.getType() != JsonEvent.Type.OPEN_ARRAY)
+            throw parseException(JsonEvent.Type.OPEN_ARRAY, e.getType());
+
         name = name(name);
         if(!Objects.equals(name, e.getName()))
             throw parseException(name, e.getName());
+        
         return e;
     }
     
@@ -104,32 +108,36 @@ public class JsonEventParser implements AutoCloseable {
     }
     
     public JsonEvent scalar() throws IOException {
-        JsonEvent e=next();
-        if(e.getType() != JsonEvent.Type.SCALAR)
-            throw parseException(JsonEvent.Type.SCALAR, e.getType());
-        return e;
+        return scalar(null);
     }
     
     public JsonEvent scalar(String name) throws IOException {
-        JsonEvent e=scalar();
+        JsonEvent e=next();
+        
+        if(e.getType() != JsonEvent.Type.SCALAR)
+            throw parseException(JsonEvent.Type.SCALAR, e.getType());
+
         name = name(name);
         if(!Objects.equals(name, e.getName()))
             throw parseException(name, e.getName());
+        
         return e;
     }
     
     public JsonEvent nil() throws IOException {
-        JsonEvent e=next();
-        if(e.getType() != JsonEvent.Type.NULL)
-            throw parseException(JsonEvent.Type.NULL, e.getType());
-        return e;
+        return nil(null);
     }
     
     public JsonEvent nil(String name) throws IOException {
-        JsonEvent e=nil();
+        JsonEvent e=next();
+        
+        if(e.getType() != JsonEvent.Type.NULL)
+            throw parseException(JsonEvent.Type.NULL, e.getType());
+        
         name = name(name);
         if(!Objects.equals(name, e.getName()))
             throw parseException(name, e.getName());
+        
         return e;
     }
     
