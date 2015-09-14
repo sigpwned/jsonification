@@ -438,17 +438,17 @@ public class JsonParser implements AutoCloseable {
                             for(int i=0;i<4;i++) {
                                 int u=getch();
                                 if(u>='0' && u<='9')
-                                    ;
+                                    ubuf.append((char) u);
                                 else
                                 if(u>='a' && u<='f')
-                                    ;
+                                    ubuf.append((char) u);
                                 else
                                 if(u>='A' && u<='F')
-                                    ;
+                                    ubuf.append((char) u);
                                 else
                                     throw new ParseJsonException("Invalid character in unicode escape sequence in string constant: \\u"+ubuf.toString()+new String(Character.toChars(u)));
                             }
-                            int uval=Integer.parseInt(buf.toString(), 16);
+                            int uval=Integer.parseInt(ubuf.toString(), 16);
                             buf.append((char)(uval & 0xFFFF));
                         }
                         else
@@ -469,9 +469,10 @@ public class JsonParser implements AutoCloseable {
                         throw new ParseJsonException("Unexpected EOF in numeric constant");
                 }
                 
-                if(cp == '0')
+                if(cp == '0') {
                     buf.appendCodePoint(cp);
-                else
+                    cp = getch();
+                } else
                 if(cp>='1' && cp<='9') {
                     while(cp>='0' && cp<='9') {
                         buf.appendCodePoint(cp);

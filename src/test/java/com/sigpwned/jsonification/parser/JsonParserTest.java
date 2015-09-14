@@ -1,6 +1,9 @@
 package com.sigpwned.jsonification.parser;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 
@@ -160,6 +163,55 @@ public class JsonParserTest {
                 public void closeArray() {
                 }
             });
+        }
+    }
+
+    @Test
+    public void test4() throws IOException {
+        try (Reader r=new InputStreamReader(Thread.currentThread().getContextClassLoader().getResource("timeline.json").openStream(), StandardCharsets.UTF_8)) {
+            try (JsonParser p=new JsonParser(r)) {
+                p.parse(new JsonParser.Handler() {
+                    @Override
+                    public void scalar(String name, String value) {
+                    }
+                    
+                    @Override
+                    public void scalar(String name, boolean value) {
+                    }
+                    
+                    @Override
+                    public void scalar(String name, double value) {
+                    }
+                    
+                    @Override
+                    public void scalar(String name, long value) {
+                    }
+                    
+                    @Override
+                    public void openObject(String name) {
+                    }
+                    
+                    @Override
+                    public void openArray(String name) {
+                    }
+                    
+                    @Override
+                    public void nil(String name) {
+                    }
+                    
+                    @Override
+                    public void eof() {
+                    }
+                    
+                    @Override
+                    public void closeObject() {
+                    }
+                    
+                    @Override
+                    public void closeArray() {
+                    }
+                });
+            }
         }
     }
 }
