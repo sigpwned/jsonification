@@ -4,6 +4,10 @@ import com.sigpwned.jsonification.value.ScalarJsonValue;
 import com.sigpwned.jsonification.value.scalar.JsonString;
 
 public final class DefaultJsonString extends AbstractScalarJsonValue implements JsonString {
+    public static DefaultJsonString valueOf(String value) {
+        return new DefaultJsonString(value);
+    }
+    
     public DefaultJsonString(String value) {
         super(value);
     }

@@ -25,6 +25,11 @@ import com.sigpwned.jsonification.value.scalar.JsonString;
     public Object getValue() {
         return value;
     }
+    
+    @Override
+    public ScalarJsonValue asScalar() {
+        return this;
+    }
 
     @Override
     public JsonNumber asNumber() {

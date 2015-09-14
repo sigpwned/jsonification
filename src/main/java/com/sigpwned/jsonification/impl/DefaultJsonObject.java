@@ -20,6 +20,11 @@ public class DefaultJsonObject extends AbstractJsonValue implements JsonObject {
     /* default */ DefaultJsonObject(Map<String,JsonValue> value) {
         this.values = value;
     }
+    
+    @Override
+    public JsonObject asObject() {
+        return this;
+    }
 
     @Override
     public JsonValue.Type getType() {
@@ -44,6 +49,11 @@ public class DefaultJsonObject extends AbstractJsonValue implements JsonObject {
     @Override
     public boolean has(String name) {
         return values.containsKey(name);
+    }
+    
+    @Override
+    public JsonValue remove(String name) {
+        return values.remove(name);
     }
 
     @Override
@@ -90,5 +100,10 @@ public class DefaultJsonObject extends AbstractJsonValue implements JsonObject {
                 };
             }
         };
+    }
+
+    @Override
+    public int size() {
+        return values.size();
     }
 }

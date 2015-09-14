@@ -18,6 +18,11 @@ public class DefaultJsonArray extends AbstractJsonValue implements JsonArray {
     public DefaultJsonArray(List<JsonValue> values) {
         this.values = values;
     }
+    
+    @Override
+    public JsonArray asArray() {
+        return this;
+    }
 
     @Override
     public JsonValue.Type getType() {

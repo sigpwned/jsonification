@@ -4,7 +4,15 @@ import com.sigpwned.jsonification.value.ScalarJsonValue;
 import com.sigpwned.jsonification.value.scalar.JsonBoolean;
 
 public final class DefaultJsonBoolean extends AbstractScalarJsonValue implements JsonBoolean {
-    public DefaultJsonBoolean(boolean value) {
+    public static DefaultJsonBoolean TRUE=new DefaultJsonBoolean(true);
+
+    public static DefaultJsonBoolean FALSE=new DefaultJsonBoolean(false);
+    
+    public static DefaultJsonBoolean valueOf(boolean value) {
+        return value ? TRUE : FALSE;
+    }
+    
+    private DefaultJsonBoolean(boolean value) {
         super(value);
     }
     

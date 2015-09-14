@@ -18,9 +18,13 @@ public interface JsonObject extends JsonValue {
     
     public boolean has(String name);
     
+    public JsonValue remove(String name);
+    
     public Set<String> keys();
     
     public Collection<JsonValue> values();
     
     public Iterable<JsonObject.Entry> entries();
+    
+    public int size();
 }

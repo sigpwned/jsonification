@@ -4,6 +4,18 @@ import com.sigpwned.jsonification.value.ScalarJsonValue;
 import com.sigpwned.jsonification.value.scalar.JsonNumber;
 
 public final class DefaultJsonNumber extends AbstractScalarJsonValue implements JsonNumber {
+    public static DefaultJsonNumber valueOf(Number value) {
+        return new DefaultJsonNumber(value);
+    }
+    
+    public static DefaultJsonNumber valueOf(long value) {
+        return new DefaultJsonNumber(value);
+    }
+    
+    public static DefaultJsonNumber valueOf(double value) {
+        return new DefaultJsonNumber(value);
+    }
+    
     public DefaultJsonNumber(long value) {
         this(Long.valueOf(value));
     }

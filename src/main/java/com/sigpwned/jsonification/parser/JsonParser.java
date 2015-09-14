@@ -7,13 +7,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sigpwned.jsonification.Json;
-import com.sigpwned.jsonification.JsonEvent;
 import com.sigpwned.jsonification.exception.ParseJsonException;
-import com.sigpwned.jsonification.impl.DefaultJsonBoolean;
-import com.sigpwned.jsonification.impl.DefaultJsonNumber;
-import com.sigpwned.jsonification.impl.DefaultJsonString;
-import com.sigpwned.jsonification.value.ScalarJsonValue;
 
 public class JsonParser implements AutoCloseable {
     public static interface Handler {
@@ -34,6 +28,8 @@ public class JsonParser implements AutoCloseable {
         public void scalar(String name, boolean value);
         
         public void scalar(String name, String value);
+        
+        public void eof();
     }
     
     private static class Token {
@@ -87,10 +83,67 @@ public class JsonParser implements AutoCloseable {
         this.scopes = new ArrayList<>();
         this.scopes.add(new Scope(Scope.Type.ROOT));
     }
+    
+    public void parse(final JsonParser.Handler delegate) throws IOException {
+        final boolean[] eof=new boolean[1];
+        final JsonParser.Handler handler=new JsonParser.Handler() {
+            @Override
+            public void scalar(String name, String value) {
+                delegate.scalar(name, value);
+            }
+            
+            @Override
+            public void scalar(String name, boolean value) {
+                delegate.scalar(name, value);
+            }
+            
+            @Override
+            public void scalar(String name, double value) {
+                delegate.scalar(name, value);
+            }
+            
+            @Override
+            public void scalar(String name, long value) {
+                delegate.scalar(name, value);
+            }
+            
+            @Override
+            public void openObject(String name) {
+                delegate.openObject(name);
+            }
+            
+            @Override
+            public void openArray(String name) {
+                delegate.openArray(name);
+            }
+            
+            @Override
+            public void nil(String name) {
+                delegate.nil(name);
+            }
+            
+            @Override
+            public void eof() {
+                eof[0] = true;
+                delegate.eof();
+            }
+            
+            @Override
+            public void closeObject() {
+                delegate.closeObject();
+            }
+            
+            @Override
+            public void closeArray() {
+                delegate.closeArray();
+            }
+        };
+        do {
+            next(handler);
+        } while(eof[0] == false);
+    }
 
-    public JsonEvent parse() throws IOException {
-        JsonEvent result;
-        
+    public void next(final JsonParser.Handler handler) throws IOException {
         Scope scope=scopes.get(scopes.size()-1);
         
         switch(scope.type) {
@@ -101,8 +154,8 @@ public class JsonParser implements AutoCloseable {
                 throw new ParseJsonException("Unexpected EOF in array");
             else
             if(token.type == Token.Type.CLOSE_ARRAY) {
+                handler.closeArray();
                 scopes.remove(scopes.size()-1);
-                result = new JsonEvent(JsonEvent.Type.CLOSE_ARRAY, null, null);
             }
             else {
                 if(token.type == Token.Type.COMMA) {
@@ -116,14 +169,14 @@ public class JsonParser implements AutoCloseable {
                     throw new ParseJsonException("Unexpected EOF in array");
                 else
                 if(isValue(token))
-                    result = new JsonEvent(JsonEvent.Type.VALUE, null, toValue(token));
+                    value(handler, null, token);
                 else
                 if(token.type == Token.Type.OPEN_OBJECT) {
-                    result = new JsonEvent(JsonEvent.Type.OPEN_OBJECT, null, null);
+                    handler.openObject(null);
                     scopes.add(new Scope(Scope.Type.OBJECT));
                 } else
                 if(token.type == Token.Type.OPEN_ARRAY) {
-                    result = new JsonEvent(JsonEvent.Type.OPEN_ARRAY, null, null);
+                    handler.openArray(null);
                     scopes.add(new Scope(Scope.Type.ARRAY));
                 }
                 else
@@ -139,8 +192,8 @@ public class JsonParser implements AutoCloseable {
                 throw new ParseJsonException("Unexpected EOF in object");
             else
             if(token.type == Token.Type.CLOSE_OBJECT) {
+                handler.closeObject();
                 scopes.remove(scopes.size()-1);
-                result = new JsonEvent(JsonEvent.Type.CLOSE_OBJECT, null, null);
             }
             else {
                 if(token.type == Token.Type.COMMA) {
@@ -171,14 +224,14 @@ public class JsonParser implements AutoCloseable {
                     throw new ParseJsonException("Unexpected EOF in object");
                 else
                 if(isValue(token))
-                    result = new JsonEvent(JsonEvent.Type.VALUE, name, toValue(token));
+                    value(handler, name, token);
                 else
                 if(token.type == Token.Type.OPEN_OBJECT) {
-                    result = new JsonEvent(JsonEvent.Type.OPEN_OBJECT, name, null);
+                    handler.openObject(name);
                     scopes.add(new Scope(Scope.Type.OBJECT));
                 } else
                 if(token.type == Token.Type.OPEN_ARRAY) {
-                    result = new JsonEvent(JsonEvent.Type.OPEN_ARRAY, name, null);
+                    handler.openArray(name);
                     scopes.add(new Scope(Scope.Type.ARRAY));
                 }
                 else
@@ -190,24 +243,21 @@ public class JsonParser implements AutoCloseable {
         case ROOT:
         {
             Token token=read();
-            if(token.type == Token.Type.EOF) {
-                if(scope.count == 0)
-                    throw new ParseJsonException("Unexpected EOF before input");
-                else
-                    result = new JsonEvent(JsonEvent.Type.EOF, null, null);
-            } else
+            if(token.type == Token.Type.EOF)
+                handler.eof();
+            else
             if(isValue(token)) {
-                result = new JsonEvent(JsonEvent.Type.VALUE, null, toValue(token));
+                value(handler, null, token);
                 scope.count = scope.count+1;
             } else
             if(token.type == Token.Type.OPEN_OBJECT) {
                 scopes.add(new Scope(Scope.Type.OBJECT));
-                result = new JsonEvent(JsonEvent.Type.OPEN_OBJECT, null, null);
+                handler.openObject(null);
                 scope.count = scope.count+1;
             } else
             if(token.type == Token.Type.OPEN_ARRAY) {
                 scopes.add(new Scope(Scope.Type.ARRAY));
-                result = new JsonEvent(JsonEvent.Type.OPEN_ARRAY, null, null);
+                handler.openArray(null);
                 scope.count = scope.count+1;
             }
             else
@@ -216,13 +266,9 @@ public class JsonParser implements AutoCloseable {
         default:
             throw new RuntimeException("unrecognized scope type: "+scope.type);
         }
-        
-        return result;
     }
     
-    private ScalarJsonValue toValue(Token t) {
-        ScalarJsonValue result;
-        
+    private void value(JsonParser.Handler handler, String name, Token t) {
         switch(t.type) {
         case CLOSE_ARRAY:
         case CLOSE_OBJECT:
@@ -236,32 +282,30 @@ public class JsonParser implements AutoCloseable {
         case DOUBLE:
         {
             final double value=Double.parseDouble(t.text);
-            result = new DefaultJsonNumber(value);
+            handler.scalar(name, value);
         } break;
         case FALSE:
-            result = new DefaultJsonBoolean(false);
+            handler.scalar(name, false);
             break;
         case LONG:
         {
             final long value=Long.parseLong(t.text);
-            result = new DefaultJsonNumber(value);
+            handler.scalar(name, value);
         } break;
         case NULL:
-            result = Json.NULL;
+            handler.nil(name);
             break;
         case STRING:
         {
             final String value=t.text;
-            result = new DefaultJsonString(value);
+            handler.scalar(name, value);
         } break;
         case TRUE:
-            result = new DefaultJsonBoolean(true);
+            handler.scalar(name, true);
             break;
         default:
             throw new IllegalArgumentException("unrecognized type: "+t.type);
         }
-        
-        return result;
     }
     
     private boolean isValue(Token t) {
@@ -333,7 +377,7 @@ public class JsonParser implements AutoCloseable {
                 peek = keywordOrSymbol(Token.Type.FALSE, cp, "alse");
             else
             if(cp == 'n')
-                peek = keywordOrSymbol(Token.Type.FALSE, cp, "ull");
+                peek = keywordOrSymbol(Token.Type.NULL, cp, "ull");
             else
             if(cp == '\"') {
                 StringBuilder buf=new StringBuilder();

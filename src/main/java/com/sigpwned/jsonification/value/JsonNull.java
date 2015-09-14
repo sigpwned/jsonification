@@ -92,6 +92,10 @@ public interface JsonNull extends JsonBoolean, JsonNumber, JsonString, JsonObjec
         public JsonValue remove(int index) {
             throw new NullJsonException();
         }
+        
+        public JsonValue remove(String name) {
+            throw new NullJsonException();
+        }
 
         public int size() {
             throw new NullJsonException();
@@ -102,7 +106,7 @@ public interface JsonNull extends JsonBoolean, JsonNumber, JsonString, JsonObjec
         }
 
         public ScalarJsonValue.Flavor getFlavor() {
-            throw new NullJsonException();
+            return ScalarJsonValue.Flavor.NULL;
         }
 
         public Object getValue() {
