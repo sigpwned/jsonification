@@ -27,6 +27,7 @@ import com.sigpwned.jsonification.exception.ParseJsonException;
  */
 public class JsonEventParser implements AutoCloseable {
     private final JsonParser parser;
+    private JsonEvent peek;
     private JsonValueFactory factory;
     private String nextName;
     
@@ -171,60 +172,67 @@ public class JsonEventParser implements AutoCloseable {
         return new ParseJsonException("Expected "+expected+", but received "+observed);
     }
     
+    public JsonEvent peek() throws IOException {
+        if(peek == null) {
+            getParser().next(new JsonParser.Handler() {
+                @Override
+                public void scalar(String name, String value) {
+                    peek = new JsonEvent(JsonEvent.Type.SCALAR, name, getFactory().newValue(value));
+                }
+                
+                @Override
+                public void scalar(String name, boolean value) {
+                    peek = new JsonEvent(JsonEvent.Type.SCALAR, name, getFactory().newValue(value));
+                }
+                
+                @Override
+                public void scalar(String name, double value) {
+                    peek = new JsonEvent(JsonEvent.Type.SCALAR, name, getFactory().newValue(value));
+                }
+                
+                @Override
+                public void scalar(String name, long value) {
+                    peek = new JsonEvent(JsonEvent.Type.SCALAR, name, getFactory().newValue(value));
+                }
+                
+                @Override
+                public void openObject(String name) {
+                    peek = new JsonEvent(JsonEvent.Type.OPEN_OBJECT, name, null);
+                }
+                
+                @Override
+                public void openArray(String name) {
+                    peek = new JsonEvent(JsonEvent.Type.OPEN_ARRAY, name, null);
+                }
+                
+                @Override
+                public void nil(String name) {
+                    peek = new JsonEvent(JsonEvent.Type.SCALAR, name, getFactory().newNull());
+                }
+                
+                @Override
+                public void eof() {
+                    peek = new JsonEvent(JsonEvent.Type.EOF, null, null);
+                }
+                
+                @Override
+                public void closeObject() {
+                    peek = new JsonEvent(JsonEvent.Type.CLOSE_OBJECT, null, null);
+                }
+                
+                @Override
+                public void closeArray() {
+                    peek = new JsonEvent(JsonEvent.Type.CLOSE_ARRAY, null, null);
+                }
+            });
+        }
+        return peek;
+    }
+    
     public JsonEvent next() throws IOException {
-        final JsonEvent[] result=new JsonEvent[1];
-        getParser().next(new JsonParser.Handler() {
-            @Override
-            public void scalar(String name, String value) {
-                result[0] = new JsonEvent(JsonEvent.Type.SCALAR, name, getFactory().newValue(value));
-            }
-            
-            @Override
-            public void scalar(String name, boolean value) {
-                result[0] = new JsonEvent(JsonEvent.Type.SCALAR, name, getFactory().newValue(value));
-            }
-            
-            @Override
-            public void scalar(String name, double value) {
-                result[0] = new JsonEvent(JsonEvent.Type.SCALAR, name, getFactory().newValue(value));
-            }
-            
-            @Override
-            public void scalar(String name, long value) {
-                result[0] = new JsonEvent(JsonEvent.Type.SCALAR, name, getFactory().newValue(value));
-            }
-            
-            @Override
-            public void openObject(String name) {
-                result[0] = new JsonEvent(JsonEvent.Type.OPEN_OBJECT, name, null);
-            }
-            
-            @Override
-            public void openArray(String name) {
-                result[0] = new JsonEvent(JsonEvent.Type.OPEN_ARRAY, name, null);
-            }
-            
-            @Override
-            public void nil(String name) {
-                result[0] = new JsonEvent(JsonEvent.Type.SCALAR, name, getFactory().newNull());
-            }
-            
-            @Override
-            public void eof() {
-                result[0] = new JsonEvent(JsonEvent.Type.EOF, null, null);
-            }
-            
-            @Override
-            public void closeObject() {
-                result[0] = new JsonEvent(JsonEvent.Type.CLOSE_OBJECT, null, null);
-            }
-            
-            @Override
-            public void closeArray() {
-                result[0] = new JsonEvent(JsonEvent.Type.CLOSE_ARRAY, null, null);
-            }
-        });
-        return result[0];
+        JsonEvent result=peek();
+        peek = null;
+        return result;
     }
 
     private JsonParser getParser() {

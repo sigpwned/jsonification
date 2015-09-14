@@ -555,6 +555,10 @@ public class JsonParser implements AutoCloseable {
                 index = index+Character.charCount(cp);
             }
             else {
+                while(Character.isLetter(ch) || Character.isDigit(ch) || ch=='$' || ch=='_') {
+                    buf.appendCodePoint(ch);
+                    ch = getch();
+                }
                 ungetch(ch);
                 break;
             }
