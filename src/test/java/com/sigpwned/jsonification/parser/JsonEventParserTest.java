@@ -114,6 +114,31 @@ public class JsonEventParserTest {
             assertThat(e10.getType(), is(JsonEvent.Type.CLOSE_OBJECT));
             assertThat(e10.getName(), nullValue());
             assertThat(e10.getValue(), nullValue());
+            
+            JsonEvent e11=p.next();
+            assertThat(e11.getType(), is(JsonEvent.Type.EOF));
+            assertThat(e11.getName(), nullValue());
+            assertThat(e11.getValue(), nullValue());
+        }
+    }
+
+    @Test
+    public void test4() throws IOException {
+        try (JsonEventParser p=new JsonEventParser("{}")) {
+            JsonEvent e1=p.next();
+            assertThat(e1.getType(), is(JsonEvent.Type.OPEN_OBJECT));
+            assertThat(e1.getName(), nullValue());
+            assertThat(e1.getValue(), nullValue());
+            
+            JsonEvent e2=p.next();
+            assertThat(e2.getType(), is(JsonEvent.Type.CLOSE_OBJECT));
+            assertThat(e2.getName(), nullValue());
+            assertThat(e2.getValue(), nullValue());
+            
+            JsonEvent e3=p.next();
+            assertThat(e3.getType(), is(JsonEvent.Type.EOF));
+            assertThat(e3.getName(), nullValue());
+            assertThat(e3.getValue(), nullValue());
         }
     }
 }
