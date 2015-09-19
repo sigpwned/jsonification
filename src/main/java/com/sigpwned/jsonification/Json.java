@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 
+import com.sigpwned.jsonification.exception.InternalErrorJsonException;
 import com.sigpwned.jsonification.generator.JsonTreeGenerator;
 import com.sigpwned.jsonification.impl.DefaultJsonValueFactory;
 import com.sigpwned.jsonification.io.IgnoreCloseReader;
+import com.sigpwned.jsonification.parser.JsonParser;
 import com.sigpwned.jsonification.parser.JsonTreeParser;
 import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonNull;
@@ -38,8 +40,9 @@ public class Json {
     public static JsonBoolean FALSE=JsonBoolean.FALSE;
     
     /**
-     * Reads one {@link JsonValue} from the given {@code Reader} and returns it.
-     * The given {@code Reader} is left open.
+     * Reads one {@link JsonValue} from the given {@code Reader} and returns
+     * it. If more than one JSON value is contained in the given text, then
+     * only the first is parsed. The given {@code Reader} is left open.
      */
     public static JsonValue parse(Reader reader) throws IOException {
         JsonValue result;
@@ -50,14 +53,48 @@ public class Json {
     }
     
     /**
-     * Reads one {@link JsonValue} from the given {@code String} and returns it.
+     * Reads one {@link JsonValue} from the given {@code String} and returns
+     * it. If more than one JSON value is contained in the given text, then
+     * only the first is parsed.
      */
-    public static JsonValue parse(String text) throws IOException {
+    public static JsonValue parse(String text) {
         JsonValue result;
-        try (JsonTreeParser p=new JsonTreeParser(text)) {
-            result = p.next();
+        try {
+            try (JsonTreeParser p=new JsonTreeParser(text)) {
+                result = p.next();
+            }
+        }
+        catch(IOException e) {
+            // This should never happen since we're working with Strings
+            throw new InternalErrorJsonException("Impossible IOException", e);
         }
         return result;
+    }
+    
+    /**
+     * Parses JSON from the given {@code String}. If more than one JSON value
+     * is contained in the given text, only the first is parsed. The given
+     * {@code Reader} is left open.
+     */
+    public static void parse(Reader reader, JsonParser.Handler handler) throws IOException {
+        try (JsonParser p=new JsonParser(new IgnoreCloseReader(reader))) {
+            p.parse(handler);
+        }
+    }
+    
+    /**
+     * Parses JSON from the given {@code String}. If more than one JSON value
+     * is contained in the given text, only the first is parsed. 
+     */
+    public static void parse(String text, JsonParser.Handler handler) {
+        try {
+            try (JsonParser p=new JsonParser(text)) {
+                p.parse(handler);
+            }
+        }
+        catch(IOException e) {
+            throw new InternalErrorJsonException("Impossible IOException", e);
+        }
     }
     
     /**
