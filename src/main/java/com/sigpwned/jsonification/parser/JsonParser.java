@@ -43,8 +43,6 @@ public class JsonParser implements AutoCloseable {
         public void scalar(String name, boolean value);
         
         public void scalar(String name, String value);
-        
-        public void eof();
     }
     
     private static class Token {
@@ -110,56 +108,57 @@ public class JsonParser implements AutoCloseable {
      * parsed.
      */
     public boolean parse(final JsonParser.Handler delegate) throws IOException {
-        final boolean[] eof=new boolean[1];
         final boolean[] completed=new boolean[1];
         final int[] depth=new int[1];
+        final int[] count=new int[1];
         final JsonParser.Handler handler=new JsonParser.Handler() {
             @Override
             public void scalar(String name, String value) {
                 delegate.scalar(name, value);
                 completed[0] = true;
+                count[0]++;
             }
             
             @Override
             public void scalar(String name, boolean value) {
                 delegate.scalar(name, value);
                 completed[0] = true;
+                count[0]++;
             }
             
             @Override
             public void scalar(String name, double value) {
                 delegate.scalar(name, value);
                 completed[0] = true;
+                count[0]++;
             }
             
             @Override
             public void scalar(String name, long value) {
                 delegate.scalar(name, value);
                 completed[0] = true;
+                count[0]++;
             }
             
             @Override
             public void openObject(String name) {
                 delegate.openObject(name);
                 depth[0] = depth[0]+1;
+                count[0]++;
             }
             
             @Override
             public void openArray(String name) {
                 delegate.openArray(name);
                 depth[0] = depth[0]+1;
+                count[0]++;
             }
             
             @Override
             public void nil(String name) {
                 delegate.nil(name);
                 completed[0] = true;
-            }
-            
-            @Override
-            public void eof() {
-                eof[0] = true;
-                delegate.eof();
+                count[0]++;
             }
             
             @Override
@@ -167,6 +166,7 @@ public class JsonParser implements AutoCloseable {
                 depth[0] = depth[0]-1;
                 delegate.closeObject();
                 completed[0] = true;
+                count[0]++;
             }
             
             @Override
@@ -174,17 +174,20 @@ public class JsonParser implements AutoCloseable {
                 depth[0] = depth[0]-1;
                 delegate.closeArray();
                 completed[0] = true;
+                count[0]++;
             }
         };
         
-        int count=0;
+        boolean eof=false;
         do {
+            int oldcount=count[0];
             completed[0] = false;
             next(handler);
-            count = count+1;
-        } while(eof[0]==false && (completed[0]==false || depth[0]!=0));
+            if(count[0] == oldcount)
+                eof = true;
+        } while(eof==false && (completed[0]==false || depth[0]!=0));
         
-        if(completed[0]==false && count!=0)
+        if(completed[0]==false && count[0]!=0)
             throw new ParseJsonException("Unexpect EOF in value");
         
         return completed[0];
@@ -290,9 +293,9 @@ public class JsonParser implements AutoCloseable {
         case ROOT:
         {
             Token token=read();
-            if(token.type == Token.Type.EOF)
-                handler.eof();
-            else
+            if(token.type == Token.Type.EOF) {
+                // No event
+            } else
             if(isValue(token)) {
                 value(handler, null, token);
                 scope.count = scope.count+1;

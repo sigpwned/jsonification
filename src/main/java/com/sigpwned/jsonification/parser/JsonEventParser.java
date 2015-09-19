@@ -211,11 +211,6 @@ public class JsonEventParser implements AutoCloseable {
                 }
                 
                 @Override
-                public void eof() {
-                    peek = new JsonEvent(JsonEvent.Type.EOF, null, null);
-                }
-                
-                @Override
                 public void closeObject() {
                     peek = new JsonEvent(JsonEvent.Type.CLOSE_OBJECT, null, null);
                 }

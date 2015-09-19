@@ -70,13 +70,13 @@ public class JsonTreeParser implements AutoCloseable {
         JsonValue result=null;
         
         JsonEvent event=getParser().next();
-        if(event.getType() == JsonEvent.Type.EOF) {
+        if(event == null) {
             // We're done here.
             result = null;
         }
         else {
             List<Scope> scopes=new ArrayList<>();
-            loop: for(JsonEvent e=event;e.getType()!=JsonEvent.Type.EOF;e=getParser().next())
+            loop: for(JsonEvent e=event;e!=null;e=getParser().next())
                 switch(e.getType()) {
                 case OPEN_OBJECT:
                     scopes.add(new Scope(e.getName(), getFactory().newObject()));
@@ -163,11 +163,11 @@ public class JsonTreeParser implements AutoCloseable {
                         }
                     }
                 } break;
-                case EOF:
-                    throw new ParseJsonException("Unexpected EOF in value");
                 default:
                     throw new JsonError("unrecognized event type: "+e.getType());
                 }
+            if(scopes.size() != 0)
+                throw new ParseJsonException("Unexpected EOF in JSON value");
         }
         
         return result;

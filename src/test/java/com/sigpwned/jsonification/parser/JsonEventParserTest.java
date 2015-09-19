@@ -41,9 +41,7 @@ public class JsonEventParserTest {
             assertThat(e2.getValue().asNumber().longVal(), is(19L));
 
             JsonEvent e3=p.next();
-            assertThat(e3.getType(), is(JsonEvent.Type.EOF));
-            assertThat(e3.getName(), nullValue());
-            assertThat(e3.getValue(), nullValue());
+            assertThat(e3, nullValue());
         }
     }
 
@@ -71,9 +69,7 @@ public class JsonEventParserTest {
             assertThat(e4.getValue(), nullValue());
         
             JsonEvent e5=p.next();
-            assertThat(e5.getType(), is(JsonEvent.Type.EOF));
-            assertThat(e5.getName(), nullValue());
-            assertThat(e5.getValue(), nullValue());
+            assertThat(e5, nullValue());
         }
     }
 
@@ -131,9 +127,7 @@ public class JsonEventParserTest {
             assertThat(e10.getValue(), nullValue());
             
             JsonEvent e11=p.next();
-            assertThat(e11.getType(), is(JsonEvent.Type.EOF));
-            assertThat(e11.getName(), nullValue());
-            assertThat(e11.getValue(), nullValue());
+            assertThat(e11, nullValue());
         }
     }
 
@@ -151,9 +145,7 @@ public class JsonEventParserTest {
             assertThat(e2.getValue(), nullValue());
             
             JsonEvent e3=p.next();
-            assertThat(e3.getType(), is(JsonEvent.Type.EOF));
-            assertThat(e3.getName(), nullValue());
-            assertThat(e3.getValue(), nullValue());
+            assertThat(e3, nullValue());
         }
     }
 

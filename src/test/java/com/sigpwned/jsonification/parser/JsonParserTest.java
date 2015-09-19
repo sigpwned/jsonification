@@ -58,10 +58,6 @@ public class JsonParserTest {
                 }
                 
                 @Override
-                public void eof() {
-                }
-                
-                @Override
                 public void closeObject() {
                 }
                 
@@ -102,10 +98,6 @@ public class JsonParserTest {
                 
                 @Override
                 public void nil(String name) {
-                }
-                
-                @Override
-                public void eof() {
                 }
                 
                 @Override
@@ -152,10 +144,6 @@ public class JsonParserTest {
                 }
                 
                 @Override
-                public void eof() {
-                }
-                
-                @Override
                 public void closeObject() {
                 }
                 
@@ -197,10 +185,6 @@ public class JsonParserTest {
                     
                     @Override
                     public void nil(String name) {
-                    }
-                    
-                    @Override
-                    public void eof() {
                     }
                     
                     @Override
