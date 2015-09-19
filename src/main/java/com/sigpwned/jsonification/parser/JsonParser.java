@@ -103,42 +103,57 @@ public class JsonParser implements AutoCloseable {
         this.scopes.add(new Scope(Scope.Type.ROOT));
     }
     
-    public void parse(final JsonParser.Handler delegate) throws IOException {
+    /**
+     * Handle JSON events until one complete JSON value has been parsed. A
+     * JSON value is one complete scalar, object, array, or nil. If the given
+     * input contains more than one complete JSON value, only the first is
+     * parsed.
+     */
+    public boolean parse(final JsonParser.Handler delegate) throws IOException {
         final boolean[] eof=new boolean[1];
+        final boolean[] completed=new boolean[1];
+        final int[] depth=new int[1];
         final JsonParser.Handler handler=new JsonParser.Handler() {
             @Override
             public void scalar(String name, String value) {
                 delegate.scalar(name, value);
+                completed[0] = true;
             }
             
             @Override
             public void scalar(String name, boolean value) {
                 delegate.scalar(name, value);
+                completed[0] = true;
             }
             
             @Override
             public void scalar(String name, double value) {
                 delegate.scalar(name, value);
+                completed[0] = true;
             }
             
             @Override
             public void scalar(String name, long value) {
                 delegate.scalar(name, value);
+                completed[0] = true;
             }
             
             @Override
             public void openObject(String name) {
                 delegate.openObject(name);
+                depth[0] = depth[0]+1;
             }
             
             @Override
             public void openArray(String name) {
                 delegate.openArray(name);
+                depth[0] = depth[0]+1;
             }
             
             @Override
             public void nil(String name) {
                 delegate.nil(name);
+                completed[0] = true;
             }
             
             @Override
@@ -149,17 +164,30 @@ public class JsonParser implements AutoCloseable {
             
             @Override
             public void closeObject() {
+                depth[0] = depth[0]-1;
                 delegate.closeObject();
+                completed[0] = true;
             }
             
             @Override
             public void closeArray() {
+                depth[0] = depth[0]-1;
                 delegate.closeArray();
+                completed[0] = true;
             }
         };
+        
+        int count=0;
         do {
+            completed[0] = false;
             next(handler);
-        } while(eof[0] == false);
+            count = count+1;
+        } while(eof[0]==false && (completed[0]==false || depth[0]!=0));
+        
+        if(completed[0]==false && count!=0)
+            throw new ParseJsonException("Unexpect EOF in value");
+        
+        return completed[0];
     }
 
     public void next(final JsonParser.Handler handler) throws IOException {
