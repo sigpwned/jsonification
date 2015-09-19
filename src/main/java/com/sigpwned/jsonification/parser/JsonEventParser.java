@@ -142,6 +142,11 @@ public class JsonEventParser implements AutoCloseable {
         return e;
     }
     
+    public void eof() throws IOException {
+        if(peek() != null)
+            throw new ParseJsonException("Expected EOF, but received "+peek().getType());
+    }
+    
     private String name(String name) {
         String result;
         
