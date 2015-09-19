@@ -76,25 +76,29 @@ public class Json {
      * is contained in the given text, only the first is parsed. The given
      * {@code Reader} is left open.
      */
-    public static void parse(Reader reader, JsonParser.Handler handler) throws IOException {
+    public static boolean parse(Reader reader, JsonParser.Handler handler) throws IOException {
+        boolean result;
         try (JsonParser p=new JsonParser(new IgnoreCloseReader(reader))) {
-            p.parse(handler);
+            result = p.parse(handler);
         }
+        return result;
     }
     
     /**
      * Parses JSON from the given {@code String}. If more than one JSON value
      * is contained in the given text, only the first is parsed. 
      */
-    public static void parse(String text, JsonParser.Handler handler) {
+    public static boolean parse(String text, JsonParser.Handler handler) {
+        boolean result;
         try {
             try (JsonParser p=new JsonParser(text)) {
-                p.parse(handler);
+                result = p.parse(handler);
             }
         }
         catch(IOException e) {
             throw new InternalErrorJsonException("Impossible IOException", e);
         }
+        return result;
     }
     
     /**
