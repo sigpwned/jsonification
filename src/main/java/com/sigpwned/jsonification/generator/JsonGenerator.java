@@ -95,6 +95,17 @@ public class JsonGenerator implements AutoCloseable {
         scope().count += 1;
     }
     
+    public void scalar(Long value) throws IOException {
+        scalar(null, value);
+    }
+    
+    public void scalar(String name, Long value) throws IOException {
+        if(value != null)
+            scalar(name, value.longValue());
+        else
+            nil(name);
+    }
+    
     public void scalar(long value) throws IOException {
         scalar(null, value);
     }
@@ -106,6 +117,17 @@ public class JsonGenerator implements AutoCloseable {
         name(name);
         writer.write(Long.toString(value));
         top.count = top.count+1;
+    }
+    
+    public void scalar(Double value) throws IOException {
+        scalar(null, value);
+    }
+    
+    public void scalar(String name, Double value) throws IOException {
+        if(value != null)
+            scalar(name, value.doubleValue());
+        else
+            nil(name);
     }
     
     public void scalar(double value) throws IOException {
@@ -132,6 +154,17 @@ public class JsonGenerator implements AutoCloseable {
         name(name);
         writer.write(string(value));
         top.count = top.count+1;
+    }
+    
+    public void scalar(Boolean value) throws IOException {
+        scalar(null, value);
+    }
+    
+    public void scalar(String name, Boolean value) throws IOException {
+        if(value != null)
+            scalar(name, value.booleanValue());
+        else
+            nil(name);
     }
     
     public void scalar(boolean value) throws IOException {
