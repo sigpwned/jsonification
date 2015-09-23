@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 
-import com.sigpwned.jsonification.exception.InternalErrorJsonException;
 import com.sigpwned.jsonification.generator.JsonTreeGenerator;
 import com.sigpwned.jsonification.impl.DefaultJsonValueFactory;
 import com.sigpwned.jsonification.io.IgnoreCloseReader;
@@ -66,7 +65,7 @@ public class Json {
         }
         catch(IOException e) {
             // This should never happen since we're working with Strings
-            throw new InternalErrorJsonException("Impossible IOException", e);
+            throw new JsonError("Impossible IOException", e);
         }
         return result;
     }
@@ -96,7 +95,7 @@ public class Json {
             }
         }
         catch(IOException e) {
-            throw new InternalErrorJsonException("Impossible IOException", e);
+            throw new JsonError("Impossible IOException", e);
         }
         return result;
     }

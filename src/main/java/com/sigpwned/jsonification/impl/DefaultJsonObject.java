@@ -79,10 +79,7 @@ public final class DefaultJsonObject extends AbstractJsonValue implements JsonOb
 
     @Override
     public JsonValue get(String name) {
-        JsonValue result=values.get(name);
-        if(result == null)
-            throw new IllegalArgumentException("no such key: "+name);
-        return result;
+        return values.get(name);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.sigpwned.jsonification.value;
 
 import com.sigpwned.jsonification.JsonValue;
+import com.sigpwned.jsonification.exception.IndexOutOfBoundsJsonException;
 
 /**
  * Copyright 2015 Andy Boothe
@@ -18,17 +19,17 @@ import com.sigpwned.jsonification.JsonValue;
  * limitations under the License.
  */
 public interface JsonArray extends JsonValue, Iterable<JsonValue> {
-    public JsonValue get(int index);
+    public JsonValue get(int index) throws IndexOutOfBoundsJsonException;
     
-    public JsonValue set(int index, JsonValue value);
+    public JsonValue set(int index, JsonValue value) throws IndexOutOfBoundsJsonException;
     
-    public JsonValue set(int index, boolean value);
+    public JsonValue set(int index, boolean value) throws IndexOutOfBoundsJsonException;
     
-    public JsonValue set(int index, long value);
+    public JsonValue set(int index, long value) throws IndexOutOfBoundsJsonException;
     
-    public JsonValue set(int index, double value);
+    public JsonValue set(int index, double value) throws IndexOutOfBoundsJsonException;
     
-    public JsonValue set(int index, String value);
+    public JsonValue set(int index, String value) throws IndexOutOfBoundsJsonException;
     
     public void add(JsonValue value);
     
@@ -40,17 +41,17 @@ public interface JsonArray extends JsonValue, Iterable<JsonValue> {
     
     public void add(String value);
     
-    public void add(int index, JsonValue value);
+    public void add(int index, JsonValue value) throws IndexOutOfBoundsJsonException;
     
-    public void add(int index, boolean value);
+    public void add(int index, boolean value) throws IndexOutOfBoundsJsonException;
     
-    public void add(int index, long value);
+    public void add(int index, long value) throws IndexOutOfBoundsJsonException;
     
-    public void add(int index, double value);
+    public void add(int index, double value) throws IndexOutOfBoundsJsonException;
     
-    public void add(int index, String value);
+    public void add(int index, String value) throws IndexOutOfBoundsJsonException;
     
-    public JsonValue remove(int index);
+    public JsonValue remove(int index) throws IndexOutOfBoundsJsonException;
     
     public int size();
 }

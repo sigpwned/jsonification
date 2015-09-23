@@ -1,7 +1,7 @@
 package com.sigpwned.jsonification.impl;
 
 import com.sigpwned.jsonification.JsonValue;
-import com.sigpwned.jsonification.exception.IllegalScalarCastJsonException;
+import com.sigpwned.jsonification.exception.ClassCastJsonException;
 import com.sigpwned.jsonification.value.ScalarJsonValue;
 import com.sigpwned.jsonification.value.scalar.JsonBoolean;
 import com.sigpwned.jsonification.value.scalar.JsonNumber;
@@ -48,16 +48,16 @@ import com.sigpwned.jsonification.value.scalar.JsonString;
 
     @Override
     public JsonNumber asNumber() {
-        throw new IllegalScalarCastJsonException(getFlavor(), ScalarJsonValue.Flavor.NUMBER);
+        throw new ClassCastJsonException(this, ScalarJsonValue.Flavor.NUMBER);
     }
 
     @Override
     public JsonBoolean asBoolean() {
-        throw new IllegalScalarCastJsonException(getFlavor(), ScalarJsonValue.Flavor.BOOLEAN);
+        throw new ClassCastJsonException(this, ScalarJsonValue.Flavor.BOOLEAN);
     }
 
     @Override
     public JsonString asString() {
-        throw new IllegalScalarCastJsonException(getFlavor(), ScalarJsonValue.Flavor.STRING);
+        throw new ClassCastJsonException(this, ScalarJsonValue.Flavor.STRING);
     }
 }

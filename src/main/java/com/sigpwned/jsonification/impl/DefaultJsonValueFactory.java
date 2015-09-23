@@ -16,6 +16,8 @@ public class DefaultJsonValueFactory implements JsonValueFactory {
     }
     
     public DefaultJsonValueFactory(DefaultJsonObject.KeyOrder keyOrder) {
+        if(keyOrder == null)
+            throw new NullPointerException();
         this.keyOrder = keyOrder;
     }
     
@@ -59,6 +61,8 @@ public class DefaultJsonValueFactory implements JsonValueFactory {
     }
     
     public void setKeyOrder(DefaultJsonObject.KeyOrder keyOrder) {
+        if(keyOrder == null)
+            throw new NullPointerException();
         this.keyOrder = keyOrder;
     }
 }

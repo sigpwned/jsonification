@@ -1,5 +1,6 @@
 package com.sigpwned.jsonification.impl;
 
+import com.sigpwned.jsonification.Json;
 import com.sigpwned.jsonification.value.ScalarJsonValue;
 import com.sigpwned.jsonification.value.scalar.JsonNumber;
 
@@ -19,15 +20,15 @@ import com.sigpwned.jsonification.value.scalar.JsonNumber;
  * limitations under the License.
  */
 public final class DefaultJsonNumber extends AbstractScalarJsonValue implements JsonNumber {
-    public static DefaultJsonNumber valueOf(Number value) {
+    public static JsonNumber valueOf(Number value) {
+        return value!=null ? new DefaultJsonNumber(value) : Json.NULL;
+    }
+    
+    public static JsonNumber valueOf(long value) {
         return new DefaultJsonNumber(value);
     }
     
-    public static DefaultJsonNumber valueOf(long value) {
-        return new DefaultJsonNumber(value);
-    }
-    
-    public static DefaultJsonNumber valueOf(double value) {
+    public static JsonNumber valueOf(double value) {
         return new DefaultJsonNumber(value);
     }
     

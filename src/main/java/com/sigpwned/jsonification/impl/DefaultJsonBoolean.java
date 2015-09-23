@@ -1,5 +1,6 @@
 package com.sigpwned.jsonification.impl;
 
+import com.sigpwned.jsonification.Json;
 import com.sigpwned.jsonification.value.ScalarJsonValue;
 import com.sigpwned.jsonification.value.scalar.JsonBoolean;
 
@@ -23,7 +24,11 @@ public final class DefaultJsonBoolean extends AbstractScalarJsonValue implements
 
     public static DefaultJsonBoolean FALSE=new DefaultJsonBoolean(false);
     
-    public static DefaultJsonBoolean valueOf(boolean value) {
+    public static JsonBoolean valueOf(Boolean value) {
+        return value!=null ? valueOf(value.booleanValue()) : Json.NULL;
+    }
+    
+    public static JsonBoolean valueOf(boolean value) {
         return value ? TRUE : FALSE;
     }
     

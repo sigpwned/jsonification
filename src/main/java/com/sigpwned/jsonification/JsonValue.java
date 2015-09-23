@@ -1,5 +1,6 @@
 package com.sigpwned.jsonification;
 
+import com.sigpwned.jsonification.exception.ClassCastJsonException;
 import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonObject;
 import com.sigpwned.jsonification.value.ScalarJsonValue;
@@ -28,9 +29,9 @@ public interface JsonValue {
     
     public JsonValue.Type getType();
     
-    public JsonObject asObject();
+    public JsonObject asObject() throws ClassCastJsonException;
     
-    public JsonArray asArray();
+    public JsonArray asArray() throws ClassCastJsonException;
     
-    public ScalarJsonValue asScalar();
+    public ScalarJsonValue asScalar() throws ClassCastJsonException;
 }

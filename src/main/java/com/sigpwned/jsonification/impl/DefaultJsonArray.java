@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.sigpwned.jsonification.JsonValue;
+import com.sigpwned.jsonification.exception.IndexOutOfBoundsJsonException;
 import com.sigpwned.jsonification.value.JsonArray;
 
 /**
@@ -31,6 +32,8 @@ public final class DefaultJsonArray extends AbstractJsonValue implements JsonArr
     }
     
     public DefaultJsonArray(List<JsonValue> values) {
+        if(values == null)
+            throw new NullPointerException();
         this.values = values;
     }
     
@@ -51,12 +54,28 @@ public final class DefaultJsonArray extends AbstractJsonValue implements JsonArr
 
     @Override
     public JsonValue get(int index) {
-        return values.get(index);
+        JsonValue result;
+        try {
+            result = values.get(index);
+        }
+        catch(IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsJsonException(this, index);
+        }
+        return result;
     }
 
     @Override
     public JsonValue set(int index, JsonValue value) {
-        return values.set(index, value);
+        if(value == null)
+            throw new NullPointerException();
+        JsonValue result;
+        try {
+            result = values.set(index, value);
+        }
+        catch(IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsJsonException(this, index);
+        }
+        return result;
     }
 
     @Override
@@ -106,6 +125,8 @@ public final class DefaultJsonArray extends AbstractJsonValue implements JsonArr
 
     @Override
     public void add(int index, JsonValue value) {
+        if(value == null)
+            throw new NullPointerException();
         values.add(index, value);
     }
 
@@ -131,7 +152,14 @@ public final class DefaultJsonArray extends AbstractJsonValue implements JsonArr
 
     @Override
     public JsonValue remove(int index) {
-        return values.remove(index);
+        JsonValue result;
+        try {
+            result = values.remove(index);
+        }
+        catch(IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsJsonException(this, index);
+        }
+        return result;
     }
 
     @Override

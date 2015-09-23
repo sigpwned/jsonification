@@ -1,5 +1,6 @@
 package com.sigpwned.jsonification.impl;
 
+import com.sigpwned.jsonification.Json;
 import com.sigpwned.jsonification.value.ScalarJsonValue;
 import com.sigpwned.jsonification.value.scalar.JsonString;
 
@@ -19,8 +20,8 @@ import com.sigpwned.jsonification.value.scalar.JsonString;
  * limitations under the License.
  */
 public final class DefaultJsonString extends AbstractScalarJsonValue implements JsonString {
-    public static DefaultJsonString valueOf(String value) {
-        return new DefaultJsonString(value);
+    public static JsonString valueOf(String value) {
+        return value!=null ? new DefaultJsonString(value) : Json.NULL;
     }
     
     public DefaultJsonString(String value) {

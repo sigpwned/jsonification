@@ -1,7 +1,7 @@
 package com.sigpwned.jsonification.impl;
 
 import com.sigpwned.jsonification.JsonValue;
-import com.sigpwned.jsonification.exception.IllegalCastJsonException;
+import com.sigpwned.jsonification.exception.ClassCastJsonException;
 import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonObject;
 import com.sigpwned.jsonification.value.ScalarJsonValue;
@@ -32,16 +32,16 @@ import com.sigpwned.jsonification.value.ScalarJsonValue;
 
     @Override
     public JsonObject asObject() {
-        throw new IllegalCastJsonException(getType(), JsonValue.Type.OBJECT);
+        throw new ClassCastJsonException(this, JsonValue.Type.OBJECT);
     }
 
     @Override
     public JsonArray asArray() {
-        throw new IllegalCastJsonException(getType(), JsonValue.Type.ARRAY);
+        throw new ClassCastJsonException(this, JsonValue.Type.ARRAY);
     }
 
     @Override
     public ScalarJsonValue asScalar() {
-        throw new IllegalCastJsonException(getType(), JsonValue.Type.SCALAR);
+        throw new ClassCastJsonException(this, JsonValue.Type.SCALAR);
     }
 }
