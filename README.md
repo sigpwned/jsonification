@@ -1,11 +1,11 @@
 # jsonification
 Jsonification is a simple JSON library for Java.
 
-JSON is a simple data format. Working with JSON should be easy, too. Jsonification tries to make working with JSON in Java simple and natural, no matter what your task or program architecture is.
+JSON is a simple data format. Working with JSON should be simple, too. Jsonification tries to make working with JSON in Java simple and natural, no matter what your task or program architecture is.
 
 ## Reading JSON
 
-Jsonification offers three ways to parse JSON data. The underlying parser is the same in all cases, so they will all parse JSON exactly the same way. The different approaches allow the user to use the code in different styles.
+Jsonification offers three ways to parse JSON data. The underlying parser is the same in all cases, so they will all parse JSON in exactly the same standards-compliant way. The different approaches allow the user to use the code in different styles.
 
 ### Streaming Push
 
@@ -112,7 +112,7 @@ Simply reading JSON events using this approach is straightforward:
         // An I/O problem occurred
     }
 
-But the event parser offers methods that support a more direct idiom for parsing JSON of a known shape that is sometimes more convenient:
+The event parser also offers methods for a more direct idiom for parsing JSON that is more convenient when you know the shape of the data you're parsing:
 
     try {
         try (JsonEventParser p=new JsonEventParser(reader)) {
@@ -144,7 +144,7 @@ There is a corresponding event-based approach to writing JSON that is described 
 
 ### Tree Model
 
-In this mode, Jsonification will parse a single JSON document into a `JsonValue` object. This approach loads an entire document into memory, so it should not be used with documents that are large or of an unknown size, but it's a great way to work with small JSON snippets quickly and easiliy.
+In this mode, Jsonification will parse a single JSON document or fragment into a `JsonValue` object. This approach loads an entire document into memory, so it should not be used with documents that are large or of an unknown size, but it's a great way to work with small JSON snippets quickly and easily.
 
     try {
         JsonValue value=Json.parse(reader);
@@ -168,7 +168,7 @@ Jsonification offers two ways to emit JSON data. Like the approaches Jsonificati
 
 ### Streaming Push
 
-In this mode, Jsonification allows the users to "push" parse events to be written on demand via method call. This generator writes events directly to the underlying stream, so it's an excellent way to generate very large JSON documents or fragments. This is a great way to generate JSON that is of a known shape.
+In this mode, Jsonification allows the users to "push" parse events to be written on demand via method call. This generator writes events directly to the underlying stream, so it's an excellent way to generate very large JSON documents or fragments.
 
     try {
         try (JsonGenerator g=new JsonGenerator(writer)) {
@@ -196,7 +196,7 @@ There is a corresponding event-based approach to reading JSON that is described 
 
 ### Tree Model
 
-In this mode, Jsonification will generate a JSON document to an underlying stream. This approach requires the entier JSON document to exist in memory, so it's not suitable for large documents, but for small documents or data already loaded into memory, it's a great way to work with JSON.
+In this mode, Jsonification will generate a JSON document to an underlying stream. This approach requires the entire JSON document to exist in memory, so it's not suitable for large documents, but for small documents or data already loaded into memory, it's a great way to work with JSON.
 
     try {
         try (JsonTreeGenerator g=new JsonTreeGenerator(writer)) {
@@ -209,4 +209,4 @@ In this mode, Jsonification will generate a JSON document to an underlying strea
 
 ## Manipulating JSON Trees
 
-Jsonification's `JsonValue` class was carefully designed to make manipulating JSON simple and natural.
+Jsonification's `JsonValue` class was carefully designed to make manipulating JSON simple and natural. Custom `JsonExceptions` are used (as opposed to system-wide exceptions like `NullPointerException` or `ClassCastException`) to make it easier for the user to recognize and fix JSON processing issues quickly.
