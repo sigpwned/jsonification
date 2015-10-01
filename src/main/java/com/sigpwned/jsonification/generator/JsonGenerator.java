@@ -45,6 +45,7 @@ public class JsonGenerator implements AutoCloseable {
     private final Writer writer;
     private final char[] cpbuf;
     private final List<Scope> scopes;
+    private String nextName;
     
     public JsonGenerator(Writer writer) {
         this.writer = writer;
@@ -148,12 +149,16 @@ public class JsonGenerator implements AutoCloseable {
     }
     
     public void scalar(String name, String value) throws IOException {
-        Scope top=scope();
-        if(top.type!=Scope.Type.ROOT && top.count!=0)
-            writer.write(",");
-        name(name);
-        writer.write(string(value));
-        top.count = top.count+1;
+        if(value != null) {
+            Scope top=scope();
+            if(top.type!=Scope.Type.ROOT && top.count!=0)
+                writer.write(",");
+            name(name);
+            writer.write(string(value));
+            top.count = top.count+1;
+        }
+        else
+            nil(name);
     }
     
     public void scalar(Boolean value) throws IOException {
@@ -193,24 +198,46 @@ public class JsonGenerator implements AutoCloseable {
         top.count = top.count+1;
     }
     
+    public void setNextName(String nextName) {
+        if(getNextName()!=null && nextName!=null && !getNextName().equals(nextName))
+            throw new GenerateJsonException("Cannot reset nextName to different value: "+getNextName()+" to "+nextName);
+        this.nextName = nextName;
+    }
+    
+    public String getNextName() {
+        return nextName;
+    }
+    
     private void name(String name) throws IOException {
+        if(name!=null && nextName!=null && !name.equals(nextName))
+            throw new GenerateJsonException("Cannot specify different name two different ways: "+name+" versus "+nextName);
+
+        String n=null;
+        if(nextName != null)
+            n = nextName;
+        if(name != null)
+            n = name;
+        
         switch(scope().type) {
         case ARRAY:
         case ROOT:
-            if(name != null)
+            if(n != null)
                 throw new GenerateJsonException("cannot provide name at "+scope()+" scope: "+name);
             break;
         case OBJECT:
-            if(name == null)
+            if(n == null)
                 throw new GenerateJsonException("must provide name at "+scope()+" scope");
             break;
         default:
             throw new JsonError("unrecognized scope: "+scope());
         }
-        if(name != null) {
-            writer.write(string(name));
+        
+        if(n != null) {
+            writer.write(string(n));
             writer.write(":");
         }
+        
+        nextName = null;
     }
     
     private String string(String s) {
