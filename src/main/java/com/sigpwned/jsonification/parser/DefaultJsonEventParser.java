@@ -1,13 +1,14 @@
 package com.sigpwned.jsonification.parser;
 
 import java.io.IOException;
-import java.io.PushbackReader;
-import java.io.Reader;
+import java.io.StringReader;
 import java.util.Objects;
 
 import com.sigpwned.jsonification.Json;
 import com.sigpwned.jsonification.JsonEvent;
-import com.sigpwned.jsonification.JsonValueFactory;
+import com.sigpwned.jsonification.JsonEventParser;
+import com.sigpwned.jsonification.JsonFactory;
+import com.sigpwned.jsonification.JsonParser;
 import com.sigpwned.jsonification.exception.ParseJsonException;
 
 /**
@@ -25,45 +26,42 @@ import com.sigpwned.jsonification.exception.ParseJsonException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonEventParser implements AutoCloseable {
+public class DefaultJsonEventParser implements AutoCloseable, JsonEventParser {
     private final JsonParser parser;
     private JsonEvent peek;
-    private JsonValueFactory factory;
+    private JsonFactory factory;
     private String nextName;
     
-    public JsonEventParser(String text) {
-        this(new JsonParser(text));
+    /* default */ DefaultJsonEventParser(String text) throws IOException {
+        this(Json.getDefaultFactory().newParser(new StringReader(text)));
     }
     
-    public JsonEventParser(Reader reader) {
-        this(new JsonParser(reader));
-    }
-    
-    public JsonEventParser(PushbackReader reader) {
-        this(new JsonParser(reader));
-    }
-    
-    public JsonEventParser(JsonParser parser) {
+    public DefaultJsonEventParser(JsonParser parser) {
         this.parser = parser;
-        this.factory = Json.getDefaultValueFactory();
+        this.factory = Json.getDefaultFactory();
     }
     
-    public JsonValueFactory getFactory() {
+    @Override
+    public JsonFactory getFactory() {
         return factory;
     }
 
-    public void setFactory(JsonValueFactory factory) {
+    @Override
+    public void setFactory(JsonFactory factory) {
         this.factory = factory;
     }
     
+    @Override
     public void nextName(String nextName) {
         this.nextName = nextName;
     }
     
+    @Override
     public JsonEvent openObject() throws IOException {
         return openObject(null);
     }
     
+    @Override
     public JsonEvent openObject(String name) throws IOException {
         JsonEvent e=next();
         
@@ -77,6 +75,7 @@ public class JsonEventParser implements AutoCloseable {
         return e;
     }
     
+    @Override
     public JsonEvent closeObject() throws IOException {
         JsonEvent e=next();
         if(e.getType() != JsonEvent.Type.CLOSE_OBJECT)
@@ -84,10 +83,12 @@ public class JsonEventParser implements AutoCloseable {
         return e;
     }
     
+    @Override
     public JsonEvent openArray() throws IOException {
         return openArray(null);
     }
     
+    @Override
     public JsonEvent openArray(String name) throws IOException {
         JsonEvent e=next();
         
@@ -101,6 +102,7 @@ public class JsonEventParser implements AutoCloseable {
         return e;
     }
     
+    @Override
     public JsonEvent closeArray() throws IOException {
         JsonEvent e=next();
         if(e.getType() != JsonEvent.Type.CLOSE_ARRAY)
@@ -108,10 +110,12 @@ public class JsonEventParser implements AutoCloseable {
         return e;
     }
     
+    @Override
     public JsonEvent scalar() throws IOException {
         return scalar(null);
     }
     
+    @Override
     public JsonEvent scalar(String name) throws IOException {
         JsonEvent e=next();
         
@@ -125,10 +129,12 @@ public class JsonEventParser implements AutoCloseable {
         return e;
     }
     
+    @Override
     public JsonEvent nil() throws IOException {
         return nil(null);
     }
     
+    @Override
     public JsonEvent nil(String name) throws IOException {
         JsonEvent e=next();
         
@@ -142,6 +148,7 @@ public class JsonEventParser implements AutoCloseable {
         return e;
     }
     
+    @Override
     public void eof() throws IOException {
         if(peek() != null)
             throw new ParseJsonException("Expected EOF, but received "+peek().getType());
@@ -177,6 +184,7 @@ public class JsonEventParser implements AutoCloseable {
         return new ParseJsonException("Expected "+expected+", but received "+observed);
     }
     
+    @Override
     public JsonEvent peek() throws IOException {
         if(peek == null) {
             getParser().next(new JsonParser.Handler() {
@@ -229,6 +237,7 @@ public class JsonEventParser implements AutoCloseable {
         return peek;
     }
     
+    @Override
     public JsonEvent next() throws IOException {
         JsonEvent result=peek();
         peek = null;
@@ -239,6 +248,7 @@ public class JsonEventParser implements AutoCloseable {
         return parser;
     }
 
+    @Override
     public void close() throws IOException {
         getParser().close();
     }

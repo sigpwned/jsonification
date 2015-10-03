@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 
+import com.sigpwned.jsonification.JsonParser;
 import com.sigpwned.jsonification.exception.ParseJsonException;
 
 /**
@@ -24,10 +25,10 @@ import com.sigpwned.jsonification.exception.ParseJsonException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonParserTest {
+public class DefaultJsonParserTest {
     @Test(expected=ParseJsonException.class)
     public void test1() throws IOException {
-        try (JsonParser p=new JsonParser("{\"hello\":\"world\"]")) {
+        try (JsonParser p=new DefaultJsonParser("{\"hello\":\"world\"]")) {
             p.parse(new JsonParser.Handler() {
                 @Override
                 public void scalar(String name, String value) {
@@ -70,7 +71,7 @@ public class JsonParserTest {
 
     @Test(expected=ParseJsonException.class)
     public void test2() throws IOException {
-        try (JsonParser p=new JsonParser("{]")) {
+        try (JsonParser p=new DefaultJsonParser("{]")) {
             p.parse(new JsonParser.Handler() {
                 @Override
                 public void scalar(String name, String value) {
@@ -113,7 +114,7 @@ public class JsonParserTest {
 
     @Test(expected=ParseJsonException.class)
     public void test3() throws IOException {
-        try (JsonParser p=new JsonParser("[\"hello\":\"world\"]")) {
+        try (JsonParser p=new DefaultJsonParser("[\"hello\":\"world\"]")) {
             p.parse(new JsonParser.Handler() {
                 @Override
                 public void scalar(String name, String value) {
@@ -157,7 +158,7 @@ public class JsonParserTest {
     @Test
     public void test4() throws IOException {
         try (Reader r=new InputStreamReader(Thread.currentThread().getContextClassLoader().getResource("timeline.json").openStream(), StandardCharsets.UTF_8)) {
-            try (JsonParser p=new JsonParser(r)) {
+            try (JsonParser p=new DefaultJsonParser(r)) {
                 p.parse(new JsonParser.Handler() {
                     @Override
                     public void scalar(String name, String value) {

@@ -7,6 +7,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sigpwned.jsonification.JsonParser;
 import com.sigpwned.jsonification.exception.ParseJsonException;
 
 /**
@@ -24,27 +25,7 @@ import com.sigpwned.jsonification.exception.ParseJsonException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonParser implements AutoCloseable {
-    public static interface Handler {
-        public void openObject(String name);
-        
-        public void closeObject();
-        
-        public void openArray(String name);
-        
-        public void closeArray();
-        
-        public void nil(String name);
-        
-        public void scalar(String name, long value);
-        
-        public void scalar(String name, double value);
-        
-        public void scalar(String name, boolean value);
-        
-        public void scalar(String name, String value);
-    }
-    
+public class DefaultJsonParser implements AutoCloseable, JsonParser {
     private static class Token {
         public static enum Type {
             OPEN_OBJECT, CLOSE_OBJECT,
@@ -61,7 +42,6 @@ public class JsonParser implements AutoCloseable {
             this.text = text;
         }
     }
-    
     
     private static class Scope {
         public static enum Type {
@@ -86,15 +66,15 @@ public class JsonParser implements AutoCloseable {
     private final List<Scope> scopes;
     private Token peek;
     
-    public JsonParser(String text) {
+    /* default */ DefaultJsonParser(String text) {
         this(new StringReader(text));
     }
     
-    public JsonParser(Reader reader) {
+    public DefaultJsonParser(Reader reader) {
         this(new PushbackReader(reader, 2));
     }
     
-    public JsonParser(PushbackReader reader) {
+    private DefaultJsonParser(PushbackReader reader) {
         this.reader = reader;
         this.cpbuf = new char[2];
         this.scopes = new ArrayList<>();
@@ -107,6 +87,7 @@ public class JsonParser implements AutoCloseable {
      * input contains more than one complete JSON value, only the first is
      * parsed.
      */
+    @Override
     public boolean parse(final JsonParser.Handler delegate) throws IOException {
         final boolean[] completed=new boolean[1];
         final int[] depth=new int[1];
@@ -193,6 +174,7 @@ public class JsonParser implements AutoCloseable {
         return completed[0];
     }
 
+    @Override
     public void next(final JsonParser.Handler handler) throws IOException {
         Scope scope=scopes.get(scopes.size()-1);
         
@@ -649,6 +631,7 @@ public class JsonParser implements AutoCloseable {
         return reader;
     }
     
+    @Override
     public void close() throws IOException {
         getReader().close();
     }

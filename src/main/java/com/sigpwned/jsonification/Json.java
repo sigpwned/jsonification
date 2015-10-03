@@ -2,13 +2,13 @@ package com.sigpwned.jsonification;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
+import java.util.concurrent.atomic.AtomicReference;
 
-import com.sigpwned.jsonification.generator.WriterJsonGenerator;
-import com.sigpwned.jsonification.impl.DefaultJsonValueFactory;
+import com.sigpwned.jsonification.impl.DefaultJsonFactory;
 import com.sigpwned.jsonification.io.IgnoreCloseReader;
-import com.sigpwned.jsonification.parser.JsonParser;
-import com.sigpwned.jsonification.parser.JsonTreeParser;
 import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonNull;
 import com.sigpwned.jsonification.value.JsonObject;
@@ -45,7 +45,7 @@ public class Json {
      */
     public static JsonValue parse(Reader reader) throws IOException {
         JsonValue result;
-        try (JsonTreeParser p=new JsonTreeParser(new IgnoreCloseReader(reader))) {
+        try (JsonTreeParser p=getDefaultFactory().newTreeParser(reader)) {
             result = p.next();
         }
         return result;
@@ -59,8 +59,10 @@ public class Json {
     public static JsonValue parse(String text) {
         JsonValue result;
         try {
-            try (JsonTreeParser p=new JsonTreeParser(text)) {
-                result = p.next();
+            try (StringReader r=new StringReader(text)) {
+                try (JsonTreeParser p=getDefaultFactory().newTreeParser(r)) {
+                    result = p.next();
+                }
             }
         }
         catch(IOException e) {
@@ -77,7 +79,7 @@ public class Json {
      */
     public static boolean parse(Reader reader, JsonParser.Handler handler) throws IOException {
         boolean result;
-        try (JsonParser p=new JsonParser(new IgnoreCloseReader(reader))) {
+        try (JsonParser p=getDefaultFactory().newParser(new IgnoreCloseReader(reader))) {
             result = p.parse(handler);
         }
         return result;
@@ -90,8 +92,10 @@ public class Json {
     public static boolean parse(String text, JsonParser.Handler handler) {
         boolean result;
         try {
-            try (JsonParser p=new JsonParser(text)) {
-                result = p.parse(handler);
+            try (StringReader r=new StringReader(text)) {
+                try (JsonParser p=getDefaultFactory().newParser(r)) {
+                    result = p.parse(handler);
+                }
             }
         }
         catch(IOException e) {
@@ -107,7 +111,7 @@ public class Json {
         StringWriter result=new StringWriter();
         try {
             try {
-                try (JsonGenerator g=new WriterJsonGenerator(result)) {
+                try (JsonGenerator g=getDefaultFactory().newGenerator(result)) {
                     g.value(tree);
                 }
             }
@@ -122,41 +126,76 @@ public class Json {
         return result.toString();
     }
     
-    private static JsonValueFactory factory=new DefaultJsonValueFactory();
+    private static AtomicReference<JsonFactory> defaultFactory=new AtomicReference<JsonFactory>(new DefaultJsonFactory());
     
-    public static JsonValueFactory getDefaultValueFactory() {
-        return factory;
+    public static JsonFactory getDefaultFactory() {
+        return defaultFactory.get();
     }
     
-    public static void setDefaultValueFactory(JsonValueFactory factory) {
-        Json.factory = factory;
+    public static void setDefaultFactory(JsonFactory defaultFactory) {
+        if(defaultFactory == null)
+            throw new NullPointerException();
+        Json.defaultFactory.set(defaultFactory);
     }
     
     public static JsonObject newObject() {
-        return factory.newObject();
+        return getDefaultFactory().newObject();
     }
 
     public static JsonArray newArray() {
-        return factory.newArray();
+        return getDefaultFactory().newArray();
     }
 
     public static JsonBoolean newValue(boolean value) {
-        return factory.newValue(value);
+        return getDefaultFactory().newValue(value);
     }
 
     public static JsonNumber newValue(long value) {
-        return factory.newValue(value);
+        return getDefaultFactory().newValue(value);
     }
 
     public static JsonNumber newValue(double value) {
-        return factory.newValue(value);
+        return getDefaultFactory().newValue(value);
     }
 
     public static JsonString newValue(String value) {
-        return factory.newValue(value);
+        return getDefaultFactory().newValue(value);
     }
 
     public static JsonNull newNull() {
-        return factory.newNull();
+        return getDefaultFactory().newNull();
+    }
+
+    public JsonParser newParser(Reader input) throws IOException {
+        return getDefaultFactory().newParser(input);
+    }
+
+    public JsonEventParser newEventParser(Reader input) throws IOException {
+        return getDefaultFactory().newEventParser(input);
+    }
+
+    public JsonEventParser newEventParser(JsonParser parser) throws IOException {
+        return getDefaultFactory().newEventParser(parser);
+    }
+
+    public JsonTreeParser newTreeParser(Reader input) throws IOException {
+        return getDefaultFactory().newTreeParser(input);
+    }
+
+    public JsonTreeParser newTreeParser(JsonParser parser) throws IOException {
+        return getDefaultFactory().newTreeParser(parser);
+    }
+
+    public JsonTreeParser newTreeParser(JsonEventParser events)
+            throws IOException {
+        return getDefaultFactory().newTreeParser(events);
+    }
+
+    public JsonGenerator newGenerator(Writer output) throws IOException {
+        return getDefaultFactory().newGenerator(output);
+    }
+
+    public JsonTreeGenerator newTreeGenerator() throws IOException {
+        return getDefaultFactory().newTreeGenerator();
     }
 }

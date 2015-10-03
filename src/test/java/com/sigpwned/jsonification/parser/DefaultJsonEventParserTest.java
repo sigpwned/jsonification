@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.sigpwned.jsonification.JsonEvent;
+import com.sigpwned.jsonification.JsonEventParser;
 import com.sigpwned.jsonification.exception.ParseJsonException;
 
 /**
@@ -26,10 +27,10 @@ import com.sigpwned.jsonification.exception.ParseJsonException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonEventParserTest {
+public class DefaultJsonEventParserTest {
     @Test
     public void test1() throws IOException {
-        try (JsonEventParser p=new JsonEventParser("17 19")) {
+        try (JsonEventParser p=new DefaultJsonEventParser("17 19")) {
             JsonEvent e1=p.next();
             assertThat(e1.getType(), is(JsonEvent.Type.SCALAR));
             assertThat(e1.getName(), nullValue());
@@ -47,7 +48,7 @@ public class JsonEventParserTest {
 
     @Test
     public void test2() throws IOException {
-        try (JsonEventParser p=new JsonEventParser("[ 123 , 456 ]")) {
+        try (JsonEventParser p=new DefaultJsonEventParser("[ 123 , 456 ]")) {
             JsonEvent e1=p.next();
             assertThat(e1.getType(), is(JsonEvent.Type.OPEN_ARRAY));
             assertThat(e1.getName(), nullValue());
@@ -75,7 +76,7 @@ public class JsonEventParserTest {
 
     @Test
     public void test3() throws IOException {
-        try (JsonEventParser p=new JsonEventParser("{ hello: \"world\", \"foo\": 123, \"wat\": [ \"man\", true, false, null ] }")) {
+        try (JsonEventParser p=new DefaultJsonEventParser("{ hello: \"world\", \"foo\": 123, \"wat\": [ \"man\", true, false, null ] }")) {
             JsonEvent e1=p.next();
             assertThat(e1.getType(), is(JsonEvent.Type.OPEN_OBJECT));
             assertThat(e1.getName(), nullValue());
@@ -133,7 +134,7 @@ public class JsonEventParserTest {
 
     @Test
     public void test4() throws IOException {
-        try (JsonEventParser p=new JsonEventParser("{}")) {
+        try (JsonEventParser p=new DefaultJsonEventParser("{}")) {
             JsonEvent e1=p.next();
             assertThat(e1.getType(), is(JsonEvent.Type.OPEN_OBJECT));
             assertThat(e1.getName(), nullValue());
@@ -151,7 +152,7 @@ public class JsonEventParserTest {
 
     @Test
     public void test5() throws IOException {
-        try (JsonEventParser p=new JsonEventParser("{\"hello\":\"world\"}")) {
+        try (JsonEventParser p=new DefaultJsonEventParser("{\"hello\":\"world\"}")) {
             p.openObject();
             
             p.nextName("hello");
@@ -165,7 +166,7 @@ public class JsonEventParserTest {
 
     @Test(expected=ParseJsonException.class)
     public void test6() throws IOException {
-        try (JsonEventParser p=new JsonEventParser("{\"hello\":\"world\"}")) {
+        try (JsonEventParser p=new DefaultJsonEventParser("{\"hello\":\"world\"}")) {
             p.openObject();
             
             // This will fail since we didn't provide the name!
@@ -175,7 +176,7 @@ public class JsonEventParserTest {
 
     @Test
     public void test7() throws IOException {
-        try (JsonEventParser p=new JsonEventParser("{fact:\"world\"}")) {
+        try (JsonEventParser p=new DefaultJsonEventParser("{fact:\"world\"}")) {
             p.openObject();
             
             p.nextName("fact");
@@ -189,7 +190,7 @@ public class JsonEventParserTest {
 
     @Test
     public void test8() throws IOException {
-        try (JsonEventParser p=new JsonEventParser("{hello:\"world\"}")) {
+        try (JsonEventParser p=new DefaultJsonEventParser("{hello:\"world\"}")) {
             p.openObject();
             
             p.nextName("hello");

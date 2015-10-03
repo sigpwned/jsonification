@@ -6,11 +6,12 @@ import java.util.List;
 
 import com.sigpwned.jsonification.Json;
 import com.sigpwned.jsonification.JsonError;
+import com.sigpwned.jsonification.JsonFactory;
 import com.sigpwned.jsonification.JsonValue;
-import com.sigpwned.jsonification.JsonValueFactory;
+import com.sigpwned.jsonification.JsonTreeGenerator;
 import com.sigpwned.jsonification.exception.GenerateJsonException;
 
-public class TreeJsonGenerator extends AbstractJsonGenerator {
+public class DefaultJsonTreeGenerator extends AbstractJsonGenerator implements JsonTreeGenerator {
     private static class Container {
         public final JsonValue value;
         public String name;
@@ -19,15 +20,15 @@ public class TreeJsonGenerator extends AbstractJsonGenerator {
         }
     }
     
-    private final JsonValueFactory factory;
+    private final JsonFactory factory;
     private final List<Container> containers;
     private JsonValue value;
     
-    public TreeJsonGenerator() {
-        this(Json.getDefaultValueFactory());
+    public DefaultJsonTreeGenerator() {
+        this(Json.getDefaultFactory());
     }
 
-    public TreeJsonGenerator(JsonValueFactory factory) {
+    public DefaultJsonTreeGenerator(JsonFactory factory) {
         this.factory = factory;
         this.containers = new ArrayList<>();
     }
@@ -184,10 +185,11 @@ public class TreeJsonGenerator extends AbstractJsonGenerator {
         return getContainers().size() == 0;
     }
     
-    private JsonValueFactory getFactory() {
+    private JsonFactory getFactory() {
         return factory;
     }
 
+    @Override
     public JsonValue getValue() {
         if(value == null)
             throw new GenerateJsonException("value not set");

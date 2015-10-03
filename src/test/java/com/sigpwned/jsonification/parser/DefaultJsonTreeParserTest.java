@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.sigpwned.jsonification.JsonTreeParser;
 import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonObject;
 import com.sigpwned.jsonification.value.scalar.JsonNumber;
@@ -26,10 +27,10 @@ import com.sigpwned.jsonification.value.scalar.JsonNumber;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonTreeParserTest {
+public class DefaultJsonTreeParserTest {
     @Test
     public void test1() throws IOException {
-        try (JsonTreeParser p=new JsonTreeParser("17 19")) {
+        try (JsonTreeParser p=new DefaultJsonTreeParser("17 19")) {
             JsonNumber v1=p.next().asScalar().asNumber();
             assertThat(v1.asScalar().asNumber().longVal(), is(17L));
 
@@ -40,7 +41,7 @@ public class JsonTreeParserTest {
 
     @Test
     public void test2() throws IOException {
-        try (JsonTreeParser p=new JsonTreeParser("[ 123 , 456 ]")) {
+        try (JsonTreeParser p=new DefaultJsonTreeParser("[ 123 , 456 ]")) {
             JsonArray v1=p.next().asArray();
             
             assertThat(v1.size(), is(2));
@@ -51,7 +52,7 @@ public class JsonTreeParserTest {
 
     @Test
     public void test3() throws IOException {
-        try (JsonTreeParser p=new JsonTreeParser("{ hello: \"world\", \"foo\": 123, \"wat\": [ \"man\", true, false, null ] }")) {
+        try (JsonTreeParser p=new DefaultJsonTreeParser("{ hello: \"world\", \"foo\": 123, \"wat\": [ \"man\", true, false, null ] }")) {
             JsonObject v1=p.next().asObject();
             
             assertThat(v1.size(), is(3));

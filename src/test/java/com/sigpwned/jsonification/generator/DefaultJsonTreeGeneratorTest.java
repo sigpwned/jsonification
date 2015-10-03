@@ -8,8 +8,12 @@ import java.io.StringWriter;
 
 import org.junit.Test;
 
+import com.sigpwned.jsonification.Json;
 import com.sigpwned.jsonification.JsonGenerator;
+import com.sigpwned.jsonification.JsonTreeGenerator;
 import com.sigpwned.jsonification.exception.GenerateJsonException;
+import com.sigpwned.jsonification.impl.DefaultJsonObject;
+import com.sigpwned.jsonification.impl.DefaultJsonFactory;
 
 /**
  * Copyright 2015 Andy Boothe
@@ -26,12 +30,12 @@ import com.sigpwned.jsonification.exception.GenerateJsonException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class WriterJsonGeneratorTest {
+public class DefaultJsonTreeGeneratorTest {
     @Test
     public void test1() throws IOException {
         StringWriter w=new StringWriter();
         try {
-            try (JsonGenerator g=new WriterJsonGenerator(w)) {
+            try (JsonTreeGenerator g=new DefaultJsonTreeGenerator(new DefaultJsonFactory(DefaultJsonObject.KeyOrder.INSERTION))) {
                 g.openObject();
                 g.scalar("hello", 123);
                 g.scalar("world", "My man");
@@ -40,6 +44,7 @@ public class WriterJsonGeneratorTest {
                 g.scalar("word");
                 g.closeArray();
                 g.closeObject();
+                w.write(Json.emit(g.getValue()));
             }
         }
         finally {
@@ -52,7 +57,7 @@ public class WriterJsonGeneratorTest {
     public void test2() throws IOException {
         StringWriter w=new StringWriter();
         try {
-            try (JsonGenerator g=new WriterJsonGenerator(w)) {
+            try (JsonTreeGenerator g=new DefaultJsonTreeGenerator(new DefaultJsonFactory(DefaultJsonObject.KeyOrder.INSERTION))) {
                 g.openObject();
                 g.scalar("hello", 123);
                 g.scalar("world", "My man");
@@ -60,6 +65,7 @@ public class WriterJsonGeneratorTest {
                 g.scalar("man");
                 g.scalar("word");
                 g.closeObject();
+                w.write(Json.emit(g.getValue()));
             }
         }
         finally {
@@ -71,7 +77,7 @@ public class WriterJsonGeneratorTest {
     public void test3() throws IOException {
         StringWriter w=new StringWriter();
         try {
-            try (JsonGenerator g=new WriterJsonGenerator(w)) {
+            try (JsonGenerator g=new DefaultJsonTreeGenerator()) {
                 g.closeObject();
             }
         }

@@ -18,11 +18,11 @@ import java.io.Writer;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class WriterJsonGenerator extends AbstractJsonGenerator {
+public class DefaultJsonGenerator extends AbstractJsonGenerator {
     private final Writer writer;
     private final char[] cpbuf;
     
-    public WriterJsonGenerator(Writer writer) {
+    public DefaultJsonGenerator(Writer writer) {
         this.writer = writer;
         this.cpbuf = new char[2];
     }

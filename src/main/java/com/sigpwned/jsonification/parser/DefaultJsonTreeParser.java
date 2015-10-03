@@ -1,15 +1,17 @@
 package com.sigpwned.jsonification.parser;
 
 import java.io.IOException;
-import java.io.PushbackReader;
-import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sigpwned.jsonification.Json;
 import com.sigpwned.jsonification.JsonError;
 import com.sigpwned.jsonification.JsonEvent;
+import com.sigpwned.jsonification.JsonEventParser;
+import com.sigpwned.jsonification.JsonFactory;
+import com.sigpwned.jsonification.JsonTreeParser;
 import com.sigpwned.jsonification.JsonValue;
-import com.sigpwned.jsonification.JsonValueFactory;
 import com.sigpwned.jsonification.exception.ParseJsonException;
 import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonObject;
@@ -29,25 +31,7 @@ import com.sigpwned.jsonification.value.JsonObject;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonTreeParser implements AutoCloseable {
-    private final JsonEventParser parser;
-    
-    public JsonTreeParser(String text) {
-        this(new JsonEventParser(text));
-    }
-    
-    public JsonTreeParser(Reader reader) {
-        this(new JsonEventParser(reader));
-    }
-    
-    public JsonTreeParser(PushbackReader reader) {
-        this(new JsonEventParser(reader));
-    }
-    
-    public JsonTreeParser(JsonEventParser parser) {
-        this.parser = parser;
-    }
-    
+public class DefaultJsonTreeParser implements AutoCloseable, JsonTreeParser {
     private static class Scope {
         public final String name;
         public final JsonValue value;
@@ -58,14 +42,27 @@ public class JsonTreeParser implements AutoCloseable {
         }
     }
 
-    public JsonValueFactory getFactory() {
+    private final JsonEventParser parser;
+    
+    /* default */ DefaultJsonTreeParser(String text) throws IOException {
+        this(Json.getDefaultFactory().newEventParser(new StringReader(text)));
+    }
+    
+    public DefaultJsonTreeParser(JsonEventParser parser) {
+        this.parser = parser;
+    }
+    
+    @Override
+    public JsonFactory getFactory() {
         return getParser().getFactory();
     }
 
-    public void setFactory(JsonValueFactory factory) {
+    @Override
+    public void setFactory(JsonFactory factory) {
         getParser().setFactory(factory);
     }
 
+    @Override
     public JsonValue next() throws IOException {
         JsonValue result=null;
         
@@ -177,6 +174,7 @@ public class JsonTreeParser implements AutoCloseable {
         return parser;
     }
 
+    @Override
     public void close() throws IOException {
         getParser().close();
     }
