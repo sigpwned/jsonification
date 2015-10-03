@@ -166,36 +166,36 @@ public class Json {
         return getDefaultFactory().newNull();
     }
 
-    public JsonParser newParser(Reader input) throws IOException {
+    public static JsonParser newParser(Reader input) throws IOException {
         return getDefaultFactory().newParser(input);
     }
 
-    public JsonEventParser newEventParser(Reader input) throws IOException {
+    public static JsonEventParser newEventParser(Reader input) throws IOException {
         return getDefaultFactory().newEventParser(input);
     }
 
-    public JsonEventParser newEventParser(JsonParser parser) throws IOException {
+    public static JsonEventParser newEventParser(JsonParser parser) throws IOException {
         return getDefaultFactory().newEventParser(parser);
     }
 
-    public JsonTreeParser newTreeParser(Reader input) throws IOException {
+    public static JsonTreeParser newTreeParser(Reader input) throws IOException {
         return getDefaultFactory().newTreeParser(input);
     }
 
-    public JsonTreeParser newTreeParser(JsonParser parser) throws IOException {
+    public static JsonTreeParser newTreeParser(JsonParser parser) throws IOException {
         return getDefaultFactory().newTreeParser(parser);
     }
 
-    public JsonTreeParser newTreeParser(JsonEventParser events)
+    public static JsonTreeParser newTreeParser(JsonEventParser events)
             throws IOException {
         return getDefaultFactory().newTreeParser(events);
     }
 
-    public JsonGenerator newGenerator(Writer output) throws IOException {
+    public static JsonGenerator newGenerator(Writer output) throws IOException {
         return getDefaultFactory().newGenerator(output);
     }
 
-    public JsonTreeGenerator newTreeGenerator() throws IOException {
+    public static JsonTreeGenerator newTreeGenerator() throws IOException {
         return getDefaultFactory().newTreeGenerator();
     }
 }
