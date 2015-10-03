@@ -8,6 +8,7 @@ import java.io.StringWriter;
 
 import org.junit.Test;
 
+import com.sigpwned.jsonification.JsonGenerator;
 import com.sigpwned.jsonification.exception.GenerateJsonException;
 
 /**
@@ -25,12 +26,12 @@ import com.sigpwned.jsonification.exception.GenerateJsonException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonGeneratorTest {
+public class WriterJsonGeneratorTest {
     @Test
     public void test1() throws IOException {
         StringWriter w=new StringWriter();
         try {
-            try (JsonGenerator g=new JsonGenerator(w)) {
+            try (JsonGenerator g=new WriterJsonGenerator(w)) {
                 g.openObject();
                 g.scalar("hello", 123);
                 g.scalar("world", "My man");
@@ -51,7 +52,7 @@ public class JsonGeneratorTest {
     public void test2() throws IOException {
         StringWriter w=new StringWriter();
         try {
-            try (JsonGenerator g=new JsonGenerator(w)) {
+            try (JsonGenerator g=new WriterJsonGenerator(w)) {
                 g.openObject();
                 g.scalar("hello", 123);
                 g.scalar("world", "My man");
@@ -70,7 +71,7 @@ public class JsonGeneratorTest {
     public void test3() throws IOException {
         StringWriter w=new StringWriter();
         try {
-            try (JsonGenerator g=new JsonGenerator(w)) {
+            try (JsonGenerator g=new WriterJsonGenerator(w)) {
                 g.closeObject();
             }
         }

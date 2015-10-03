@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 
-import com.sigpwned.jsonification.generator.JsonTreeGenerator;
+import com.sigpwned.jsonification.generator.WriterJsonGenerator;
 import com.sigpwned.jsonification.impl.DefaultJsonValueFactory;
 import com.sigpwned.jsonification.io.IgnoreCloseReader;
 import com.sigpwned.jsonification.parser.JsonParser;
@@ -107,8 +107,8 @@ public class Json {
         StringWriter result=new StringWriter();
         try {
             try {
-                try (JsonTreeGenerator g=new JsonTreeGenerator(result)) {
-                    g.emit(tree);
+                try (JsonGenerator g=new WriterJsonGenerator(result)) {
+                    g.value(tree);
                 }
             }
             finally {
