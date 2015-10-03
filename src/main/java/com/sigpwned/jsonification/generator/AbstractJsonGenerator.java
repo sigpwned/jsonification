@@ -9,6 +9,7 @@ import com.sigpwned.jsonification.JsonGenerator;
 import com.sigpwned.jsonification.JsonValue;
 import com.sigpwned.jsonification.JsonWalker;
 import com.sigpwned.jsonification.exception.GenerateJsonException;
+import com.sigpwned.jsonification.util.JsonWalkers;
 
 /**
  * Copyright 2015 Andy Boothe
@@ -26,18 +27,6 @@ import com.sigpwned.jsonification.exception.GenerateJsonException;
  * limitations under the License.
  */
 public abstract class AbstractJsonGenerator implements AutoCloseable, JsonGenerator {
-    private static class GenerationException extends RuntimeException {
-        private static final long serialVersionUID = 7564693885415072263L;
-
-        public GenerationException(IOException cause) {
-            super(cause);
-        }
-        
-        public IOException getCause() {
-            return (IOException) super.getCause();
-        }
-    }
-    
     protected static class Scope {
         public static enum Type {
             ROOT, OBJECT, ARRAY;
@@ -247,100 +236,13 @@ public abstract class AbstractJsonGenerator implements AutoCloseable, JsonGenera
         if(name != null)
             setNextName(name);
         try {
-            new JsonWalker(value).walk(new JsonWalker.Handler() {
-                @Override
-                public void scalar(String name, String value) {
-                    try {
-                        AbstractJsonGenerator.this.scalar(name, value);
-                    }
-                    catch(IOException e) {
-                        throw new GenerationException(e);
-                    }
-                }
-                
-                @Override
-                public void scalar(String name, boolean value) {
-                    try {
-                        AbstractJsonGenerator.this.scalar(name, value);
-                    }
-                    catch(IOException e) {
-                        throw new GenerationException(e);
-                    }
-                }
-                
-                @Override
-                public void scalar(String name, double value) {
-                    try {
-                        AbstractJsonGenerator.this.scalar(name, value);
-                    }
-                    catch(IOException e) {
-                        throw new GenerationException(e);
-                    }
-                }
-                
-                @Override
-                public void scalar(String name, long value) {
-                    try {
-                        AbstractJsonGenerator.this.scalar(name, value);
-                    }
-                    catch(IOException e) {
-                        throw new GenerationException(e);
-                    }
-                }
-                
-                @Override
-                public void openObject(String name) {
-                    try {
-                        AbstractJsonGenerator.this.openObject(name);
-                    }
-                    catch(IOException e) {
-                        throw new GenerationException(e);
-                    }
-                }
-                
-                @Override
-                public void nil(String name) {
-                    try {
-                        AbstractJsonGenerator.this.nil(name);
-                    }
-                    catch(IOException e) {
-                        throw new GenerationException(e);
-                    }
-                }
-                
-                @Override
-                public void closeObject() {
-                    try {
-                        AbstractJsonGenerator.this.closeObject();
-                    }
-                    catch(IOException e) {
-                        throw new GenerationException(e);
-                    }
-                }
-                
-                @Override
-                public void openArray(String name) {
-                    try {
-                        AbstractJsonGenerator.this.openArray(name);
-                    }
-                    catch(IOException e) {
-                        throw new GenerationException(e);
-                    }
-                }
-                
-                @Override
-                public void closeArray() {
-                    try {
-                        AbstractJsonGenerator.this.closeArray();
-                    }
-                    catch(IOException e) {
-                        throw new GenerationException(e);
-                    }
-                }
-            });
+            new JsonWalker(value).walk(JsonWalkers.newGeneratorHandler(this));
         }
-        catch(GenerationException e) {
-            throw e.getCause();
+        catch(GenerateJsonException e) {
+            if(e.getCause()!=null && e.getCause() instanceof IOException)
+                throw (IOException) e.getCause();
+            else
+                throw e;
         }
     }
     
