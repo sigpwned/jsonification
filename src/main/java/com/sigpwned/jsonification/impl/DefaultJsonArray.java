@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.sigpwned.jsonification.Json;
 import com.sigpwned.jsonification.JsonValue;
 import com.sigpwned.jsonification.exception.IndexOutOfBoundsJsonException;
 import com.sigpwned.jsonification.value.JsonArray;
@@ -31,7 +32,7 @@ public final class DefaultJsonArray extends AbstractJsonValue implements JsonArr
         this(new ArrayList<JsonValue>());
     }
     
-    public DefaultJsonArray(List<JsonValue> values) {
+    private DefaultJsonArray(List<JsonValue> values) {
         if(values == null)
             throw new NullPointerException();
         this.values = values;
@@ -66,11 +67,9 @@ public final class DefaultJsonArray extends AbstractJsonValue implements JsonArr
 
     @Override
     public JsonValue set(int index, JsonValue value) {
-        if(value == null)
-            throw new NullPointerException();
         JsonValue result;
         try {
-            result = values.set(index, value);
+            result = values.set(index, value!=null ? value : Json.NULL);
         }
         catch(IndexOutOfBoundsException e) {
             throw new IndexOutOfBoundsJsonException(this, index);
@@ -100,7 +99,7 @@ public final class DefaultJsonArray extends AbstractJsonValue implements JsonArr
     
     @Override
     public void add(JsonValue value) {
-        values.add(value);
+        values.add(value!=null ? value : Json.NULL);
     }
 
     @Override
@@ -125,9 +124,7 @@ public final class DefaultJsonArray extends AbstractJsonValue implements JsonArr
 
     @Override
     public void add(int index, JsonValue value) {
-        if(value == null)
-            throw new NullPointerException();
-        values.add(index, value);
+        values.add(index, value!=null ? value : Json.NULL);
     }
 
     @Override

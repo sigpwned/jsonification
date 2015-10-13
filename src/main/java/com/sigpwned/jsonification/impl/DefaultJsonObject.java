@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.sigpwned.jsonification.Json;
 import com.sigpwned.jsonification.JsonError;
 import com.sigpwned.jsonification.JsonValue;
 import com.sigpwned.jsonification.value.JsonObject;
@@ -63,7 +64,7 @@ public final class DefaultJsonObject extends AbstractJsonValue implements JsonOb
         this(map(keyOrder));
     }
 
-    public DefaultJsonObject(Map<String,JsonValue> values) {
+    private DefaultJsonObject(Map<String,JsonValue> values) {
         this.values = values;
     }
     
@@ -84,9 +85,7 @@ public final class DefaultJsonObject extends AbstractJsonValue implements JsonOb
 
     @Override
     public void set(String name, JsonValue value) {
-        if(value == null)
-            throw new NullPointerException();
-        values.put(name, value);
+        values.put(name, value!=null ? value : Json.NULL);
     }
     
     @Override
