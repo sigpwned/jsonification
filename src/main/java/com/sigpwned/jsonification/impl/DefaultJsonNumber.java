@@ -68,4 +68,9 @@ public final class DefaultJsonNumber extends AbstractScalarJsonValue implements 
     public double doubleVal() {
         return getNumberValue().doubleValue();
     }
+
+    @Override
+    public int intVal() {
+        return getNumberValue().intValue();
+    }
 }

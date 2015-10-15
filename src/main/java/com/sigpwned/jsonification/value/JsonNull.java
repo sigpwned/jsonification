@@ -51,6 +51,10 @@ public interface JsonNull extends JsonBoolean, JsonNumber, JsonString, JsonObjec
             throw new NullJsonException();
         }
 
+        public int intVal() {
+            throw new NullJsonException();
+        }
+        
         public double doubleVal() {
             throw new NullJsonException();
         }
@@ -226,7 +230,7 @@ public interface JsonNull extends JsonBoolean, JsonNumber, JsonString, JsonObjec
             throw new NullJsonException();
         }
 
-        @Override
+        @Override   
         public JsonValue set(int index, String value) {
             throw new NullJsonException();
         }
