@@ -1,6 +1,4 @@
 # jsonification
-Jsonification is a simple JSON library for Java.
-
 JSON is a simple data format. Working with JSON should be simple, too. Jsonification tries to make working with JSON in Java simple and natural, no matter what your task or program architecture is.
 
 ## Reading JSON
@@ -9,7 +7,7 @@ Jsonification offers three ways to parse JSON data. The underlying parser is the
 
 ### Streaming Push
 
-In this mode, Jsonification will "push" parse events to a handler class via method calls. This parser only holds in memory the data from the current event being processed, so it's an excellent way to process very large JSON documents or fragments. However, because the user has no control or context for the JSON events other than the sequence in which they are processed, parsing JSON in this way frequently requires the user to use complex processing logic to interpret the JSON data.
+In this mode, Jsonification will "push" parse events to a handler class via method calls. This parser only holds in memory the data from the current event being processed, so it's an excellent way to process very large JSON documents or fragments. However, because the user has no control or context for the JSON events other than the sequence in which they are processed, parsing JSON in this way frequently requires the user to use complex processing logic to interpret the JSON data. This approach is great when the JSON being parsed is large but simple.
 
     try {
         boolean parsed=Json.parse(reader, new JsonParser.Handler() {
@@ -65,7 +63,7 @@ In this mode, Jsonification will "push" parse events to a handler class via meth
 
 ### Streaming Pull
 
-In this mode, Jsonification allows the users to "pull" parse events on demand via a method call. This parser also only holds in memory the data from the current event being processed, so it's also an excellent way to process very large JSON documents or fragments. Because this approach allows the user to pull events on demand, it can make JSON processing much simpler.
+In this mode, Jsonification allows the user to "pull" parse events on demand via a method call. This parser also only holds in memory the data from the current event being processed, so it's also an excellent way to process very large JSON documents or fragments. Because this approach allows the user to pull events on demand, it can make JSON processing much simpler. This approach is effective when the JSON being parsed is large but the shape of the data is not known ahead of time because it allows the user more freedom to apply common parsing techniques, like recursive descent.
 
 Simply reading JSON events using this approach is straightforward:
 
@@ -112,7 +110,7 @@ Simply reading JSON events using this approach is straightforward:
         // An I/O problem occurred
     }
 
-The event parser also offers methods for a more direct idiom for parsing JSON that is more convenient when you know the shape of the data you're parsing:
+The event parser also offers methods for a more direct idiom for parsing JSON that is more convenient when you know the shape of the data you're parsing. Because the parsing is incremental, this approach works even for very large JSON documents. This also allows the user to define methods or classes that parse a known data type from a stream on demand, which often simplifies parsing tremendously.
 
     try {
         try (JsonEventParser p=new JsonEventParser(reader)) {
@@ -130,6 +128,7 @@ The event parser also offers methods for a more direct idiom for parsing JSON th
  
             p.closeObject();
 
+            // Assert that EOF has been reached. Not required.
             p.eof();
         }
     }
@@ -168,7 +167,7 @@ Jsonification offers two ways to emit JSON data. Like the approaches Jsonificati
 
 ### Streaming Push
 
-In this mode, Jsonification allows the users to "push" parse events to be written on demand via method call. This generator writes events directly to the underlying stream, so it's an excellent way to generate very large JSON documents or fragments.
+In this mode, Jsonification allows the users to "push" parse events to be written on demand via method call. This generator writes events directly to the underlying stream, so it's an excellent way to generate very large JSON documents or fragments without keeping the entire document in memory.
 
     try {
         try (JsonGenerator g=new JsonGenerator(writer)) {
@@ -209,4 +208,4 @@ In this mode, Jsonification will generate a JSON document to an underlying strea
 
 ## Manipulating JSON Trees
 
-Jsonification's `JsonValue` class was carefully designed to make manipulating JSON simple and natural. Custom `JsonExceptions` are used (as opposed to system-wide exceptions like `NullPointerException` or `ClassCastException`) to make it easier for the user to recognize and fix JSON processing issues quickly.
+Jsonification's `JsonValue` class was carefully designed to make manipulating JSON simple and natural. Custom `JsonExceptions` are used (as opposed to builtin exceptions like `NullPointerException` or `ClassCastException`) to make it easier for the user to recognize and fix issues related to JSON processing (as opposed to errors in other program logic) quickly.
