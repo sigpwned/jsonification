@@ -8,7 +8,41 @@
   <packaging>jar</packaging>
 
   <name>jsonification</name>
-  <url>http://maven.apache.org</url>
+  <description>
+    Jsonification is a JSON processing library for Java.
+  </description>
+  <url>https://github.com/sigpwned/jsonification</url>
+  <inceptionYear>2011</inceptionYear>
+  
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+  
+  <developers>
+    <developer>
+      <id>aboothe</id>
+      <name>Andy Boothe</name>
+      <email>andy@sigpwned.com</email>
+      <roles>
+        <role>Lead Developer</role>
+      </roles>
+      <timezone>America/Chicago</timezone>
+      <properties>
+        <twitter>sigpwned</twitter>
+      </properties>
+    </developer>
+  </developers>
+  
+  <scm>
+    <url>https://github.com/sigpwned/jsonification</url>
+    <connection>scm:git:git://github.com/sigpwned/jsonification.git</connection>
+    <developerConnection>scm:git:git@github.com:sigpwned/jsonification.git</developerConnection>
+  </scm>  
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
