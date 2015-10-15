@@ -182,6 +182,11 @@ public class JsonNullTest {
     }
 
     @Test(expected=NullJsonException.class)
+    public void intValTest() {
+        JsonNull.NULL.intVal();
+    }
+
+    @Test(expected=NullJsonException.class)
     public void removeTest1() {
         JsonNull.NULL.remove(0);
     }
