@@ -381,178 +381,214 @@ public class DefaultJsonParser implements AutoCloseable, JsonParser {
             while(Character.isSpaceChar(cp))
                 cp = getch();
             
-            if(cp == -1)
-                peek = new Token(Token.Type.EOF, "$");
+            // We use this somewhat complex approach to tokenizing because a
+            // switch statement is important for performance.
+            if(cp>='0' && cp<='9')
+                peek = number(cp);
             else
-            if(cp == '{')
-                peek = new Token(Token.Type.OPEN_OBJECT, "{");
+            if(cp>='A' && cp<='Z')
+                peek = symbol(cp);
             else
-            if(cp == '}')
-                peek = new Token(Token.Type.CLOSE_OBJECT, "}");
-            else
-            if(cp == '[')
-                peek = new Token(Token.Type.OPEN_ARRAY, "[");
-            else
-            if(cp == ']')
-                peek = new Token(Token.Type.CLOSE_ARRAY, "]");
-            else
-            if(cp == ':')
-                peek = new Token(Token.Type.COLON, ":");
-            else
-            if(cp == ',')
-                peek = new Token(Token.Type.COMMA, ",");
-            else
-            if(cp == 't')
-                peek = keywordOrSymbol(Token.Type.TRUE, cp, "rue");
-            else
-            if(cp == 'f')
-                peek = keywordOrSymbol(Token.Type.FALSE, cp, "alse");
-            else
-            if(cp == 'n')
-                peek = keywordOrSymbol(Token.Type.NULL, cp, "ull");
-            else
-            if(cp == '\"') {
-                StringBuilder buf=new StringBuilder();
-                for(cp=getch();cp!='"';cp=getch()) {
-                    if(cp == -1)
-                        throw new ParseJsonException("Unexpected EOF in string constant");
-                    else
-                    if(cp == '\\') {
-                        int cp2=getch();
-                        if(cp2 == -1)
-                            throw new ParseJsonException("Unexpected EOF in escape sequence in string constant");
+            if((cp>='a' && cp<='z') && (cp!='t' && cp!='f' && cp!='n')) {
+                // This super weird expression makes sure we aren't starting a
+                // true, false, or null value!
+                peek = symbol(cp);
+            }
+            else {
+                switch(cp) {
+                case -1:
+                    peek = new Token(Token.Type.EOF, "$");
+                    break;
+                case '{':
+                    peek = new Token(Token.Type.OPEN_OBJECT, "{");
+                    break;
+                case '}':
+                    peek = new Token(Token.Type.CLOSE_OBJECT, "}");
+                    break;
+                case '[':
+                    peek = new Token(Token.Type.OPEN_ARRAY, "[");
+                    break;
+                case ']':
+                    peek = new Token(Token.Type.CLOSE_ARRAY, "]");
+                    break;
+                case ':':
+                    peek = new Token(Token.Type.COLON, ":");
+                    break;
+                case ',':
+                    peek = new Token(Token.Type.COMMA, ",");
+                    break;
+                case 't':
+                    peek = keywordOrSymbol(Token.Type.TRUE, cp, "rue");
+                    break;
+                case 'f':
+                    peek = keywordOrSymbol(Token.Type.FALSE, cp, "alse");
+                    break;
+                case 'n':
+                    peek = keywordOrSymbol(Token.Type.NULL, cp, "ull");
+                    break;
+                case '"':
+                {
+                    StringBuilder buf=new StringBuilder();
+                    for(cp=getch();cp!='"';cp=getch()) {
+                        if(cp == -1)
+                            throw new ParseJsonException("Unexpected EOF in string constant");
                         else
-                        if(cp2 == '"')
-                            buf.append('"');
-                        else
-                        if(cp2 == '\\')
-                            buf.append('\\');
-                        else
-                        if(cp2 == '/')
-                            buf.append('/');
-                        else
-                        if(cp2 == 'b')
-                            buf.append('\b');
-                        else
-                        if(cp2 == 'f')
-                            buf.append('\f');
-                        else
-                        if(cp2 == 'n')
-                            buf.append('\n');
-                        else
-                        if(cp2 == 'r')
-                            buf.append('\r');
-                        else
-                        if(cp2 == 't')
-                            buf.append('\t');
-                        else
-                        if(cp2 == 'u') {
-                            StringBuilder ubuf=new StringBuilder();
-                            for(int i=0;i<4;i++) {
-                                int u=getch();
-                                if(u>='0' && u<='9')
-                                    ubuf.append((char) u);
-                                else
-                                if(u>='a' && u<='f')
-                                    ubuf.append((char) u);
-                                else
-                                if(u>='A' && u<='F')
-                                    ubuf.append((char) u);
-                                else
-                                    throw new ParseJsonException("Invalid character in unicode escape sequence in string constant: \\u"+ubuf.toString()+new String(Character.toChars(u)));
+                        if(cp == '\\') {
+                            int cp2=getch();
+                            if(cp2 == -1)
+                                throw new ParseJsonException("Unexpected EOF in escape sequence in string constant");
+                            else
+                            if(cp2 == '"')
+                                buf.append('"');
+                            else
+                            if(cp2 == '\\')
+                                buf.append('\\');
+                            else
+                            if(cp2 == '/')
+                                buf.append('/');
+                            else
+                            if(cp2 == 'b')
+                                buf.append('\b');
+                            else
+                            if(cp2 == 'f')
+                                buf.append('\f');
+                            else
+                            if(cp2 == 'n')
+                                buf.append('\n');
+                            else
+                            if(cp2 == 'r')
+                                buf.append('\r');
+                            else
+                            if(cp2 == 't')
+                                buf.append('\t');
+                            else
+                            if(cp2 == 'u') {
+                                StringBuilder ubuf=new StringBuilder();
+                                for(int i=0;i<4;i++) {
+                                    int u=getch();
+                                    if(u>='0' && u<='9')
+                                        ubuf.append((char) u);
+                                    else
+                                    if(u>='a' && u<='f')
+                                        ubuf.append((char) u);
+                                    else
+                                    if(u>='A' && u<='F')
+                                        ubuf.append((char) u);
+                                    else
+                                        throw new ParseJsonException("Invalid character in unicode escape sequence in string constant: \\u"+ubuf.toString()+new String(Character.toChars(u)));
+                                }
+                                int uval=Integer.parseInt(ubuf.toString(), 16);
+                                buf.append((char)(uval & 0xFFFF));
                             }
-                            int uval=Integer.parseInt(ubuf.toString(), 16);
-                            buf.append((char)(uval & 0xFFFF));
+                            else
+                                throw new ParseJsonException("Invalid escape sequence in string constant: \\"+new String(Character.toChars(cp2)));
                         }
                         else
-                            throw new ParseJsonException("Invalid escape sequence in string constant: \\"+new String(Character.toChars(cp2)));
+                            buf.appendCodePoint(cp);
                     }
+                    peek = new Token(Token.Type.STRING, buf.toString());
+                } break;
+                case '-':
+                case '.':
+                    peek = number(cp);
+                    break;
+                case '_':
+                case '$':
+                    peek = symbol(cp);
+                    break;
+                default:
+                    if(Character.isLetter(cp))
+                        peek = symbol(cp);
                     else
-                        buf.appendCodePoint(cp);
+                        throw new ParseJsonException("Unrecognized character: "+new String(Character.toChars(cp)));
                 }
-                peek = new Token(Token.Type.STRING, buf.toString());
-            } else
-            if(Character.isDigit(cp) || cp=='-' || cp=='.') {
-                StringBuilder buf=new StringBuilder();
-                
-                if(cp == '-') {
-                    buf.appendCodePoint(cp);
-                    cp = getch();
-                    if(cp == -1)
-                        throw new ParseJsonException("Unexpected EOF in numeric constant");
-                }
-                
-                if(cp == '0') {
-                    buf.appendCodePoint(cp);
-                    cp = getch();
-                } else
-                if(cp>='1' && cp<='9') {
-                    while(cp>='0' && cp<='9') {
-                        buf.appendCodePoint(cp);
-                        cp = getch();
-                    }
-                } else
-                if(cp == '.') {
-                    // This is fine. Just wait for numbers.
-                }
-                else
-                    throw new ParseJsonException("Unexpected character in numeric constant: "+new String(Character.toChars(cp)));
-
-                boolean decimal=false;
-                
-                if(cp == '.') {
-                    decimal = true;
-                    buf.appendCodePoint(cp);
-                    cp = getch();
-                    while(cp>='0' && cp<='9') {
-                        buf.appendCodePoint(cp);
-                        cp = getch();
-                    }
-                    if(buf.length() == 1)
-                        throw new ParseJsonException("Expected digits around decimal point in numeric constant: "+buf.toString());
-                }
-                
-                if(cp=='e' || cp=='E') {
-                    decimal = true;
-                    buf.appendCodePoint(cp);
-                    cp = getch();
-                    if(cp=='-' || cp=='+') {
-                        buf.appendCodePoint(cp);
-                        cp = getch();
-                    }
-                    while(cp>='0' && cp<='9') {
-                        buf.appendCodePoint(cp);
-                        cp = getch();
-                    }
-                    if(Character.toLowerCase(buf.charAt(buf.length()-1)) == 'e')
-                        throw new ParseJsonException("Expected digits after scientific notation in numeric constant: "+buf.toString());
-                }
-                
-                if(decimal)
-                    peek = new Token(Token.Type.DOUBLE, buf.toString());
-                else
-                    peek = new Token(Token.Type.LONG, buf.toString());
-
-                ungetch(cp);
-            } else
-            if(Character.isLetter(cp) || cp=='_' || cp=='$') {
-                StringBuilder buf=new StringBuilder();
-                buf.appendCodePoint(cp);
-                
-                cp = getch();
-                while(Character.isLetter(cp) || Character.isDigit(cp) || cp=='_' || cp=='$') {
-                    buf.appendCodePoint(cp);
-                    cp = getch();
-                }
-                
-                peek = new Token(Token.Type.SYMBOL, buf.toString());
-                
-                ungetch(cp);
             }
-            else
-                throw new ParseJsonException("Unrecognized character: "+new String(Character.toChars(cp)));
         }
         return peek;
+    }
+    
+    private Token symbol(int cp) throws IOException {
+        StringBuilder buf=new StringBuilder();
+        buf.appendCodePoint(cp);
+        
+        cp = getch();
+        while(Character.isLetter(cp) || Character.isDigit(cp) || cp=='_' || cp=='$') {
+            buf.appendCodePoint(cp);
+            cp = getch();
+        }
+        
+        Token result=new Token(Token.Type.SYMBOL, buf.toString());
+        
+        ungetch(cp);
+        
+        return result;
+    }
+    
+    private Token number(int cp) throws IOException {
+        StringBuilder buf=new StringBuilder();
+        
+        if(cp == '-') {
+            buf.appendCodePoint(cp);
+            cp = getch();
+            if(cp == -1)
+                throw new ParseJsonException("Unexpected EOF in numeric constant");
+        }
+        
+        if(cp == '0') {
+            buf.appendCodePoint(cp);
+            cp = getch();
+        } else
+        if(cp>='1' && cp<='9') {
+            while(cp>='0' && cp<='9') {
+                buf.appendCodePoint(cp);
+                cp = getch();
+            }
+        } else
+        if(cp == '.') {
+            // This is fine. Just wait for numbers.
+        }
+        else
+            throw new ParseJsonException("Unexpected character in numeric constant: "+new String(Character.toChars(cp)));
+
+        boolean decimal=false;
+        
+        if(cp == '.') {
+            decimal = true;
+            buf.appendCodePoint(cp);
+            cp = getch();
+            while(cp>='0' && cp<='9') {
+                buf.appendCodePoint(cp);
+                cp = getch();
+            }
+            if(buf.length() == 1)
+                throw new ParseJsonException("Expected digits around decimal point in numeric constant: "+buf.toString());
+        }
+        
+        if(cp=='e' || cp=='E') {
+            decimal = true;
+            buf.appendCodePoint(cp);
+            cp = getch();
+            if(cp=='-' || cp=='+') {
+                buf.appendCodePoint(cp);
+                cp = getch();
+            }
+            while(cp>='0' && cp<='9') {
+                buf.appendCodePoint(cp);
+                cp = getch();
+            }
+            if(Character.toLowerCase(buf.charAt(buf.length()-1)) == 'e')
+                throw new ParseJsonException("Expected digits after scientific notation in numeric constant: "+buf.toString());
+        }
+        
+        Token result;
+        if(decimal)
+            result = new Token(Token.Type.DOUBLE, buf.toString());
+        else
+            result = new Token(Token.Type.LONG, buf.toString());
+
+        ungetch(cp);
+        
+        return result;
     }
     
     private Token keywordOrSymbol(Token.Type type, int cp0, String s) throws IOException {
