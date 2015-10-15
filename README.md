@@ -1,5 +1,44 @@
-# jsonification
+# Jsonification
 JSON is a simple data format. Working with JSON should be simple, too. Jsonification tries to make working with JSON in Java simple and natural, no matter what your task or program architecture is.
+
+## Overview
+Jsonification provides ways to parse and emit JSON incrementally, which is perfect for working with large JSON documents, or as a tree, which makes manipulating small JSON documents like API responses a snap. For example, parsing [an example Twitter API response](https://dev.twitter.com/rest/reference/get/users/show) and pulling out a few fields is just a few simple lines of code:
+
+    String userJsonResponse=getUserDataFromTwitter("twitterdev");
+    JsonObject o=Json.parse(userJsonResponse).asObject();
+    long id=o.get("id").asScalar().asNumber().longVal(); // 2244994945
+    String screenName=o.get("screen_name").asScalar().asString().stringVal();
+    int followers=o.get("followers_count").asScalar().asNumber().intVal(); // 143916
+    boolean following=o.get("following").asScalar().asBoolean().booleanVal(); // false
+    
+If you're working with JSON trees, Jsonification also makes working with JSON `null` -- a common difficulty in other libraries -- by representing it with a custom value instead of using Java's native `null` value. This allows you to manipulate JSON without worrying about `NullPointerException`s. To continue the above example, these are all ways you could determine if the user has ever sent a tweet by checking if the user's most recent tweet exists:
+
+    if(o.get("status").isNull()) {
+        // The user has never tweeted
+    }
+    
+    if(o.get("status") == Json.NULL) {
+        // The user has never tweeted
+    }
+    
+    if(o.get("status").getType() == JsonValue.Type.NULL) {
+        // The user has never tweeted
+    }
+    
+Jsonification is also careful to use its own exceptions instead of Java's builtin exceptions to make telling the difference between JSON processing errors and program logic errors easier. For example, If you did try to read through the "status" attribute above and it was `null`, Jsonification would throw a `JsonNullException` instead of a `NullPointerException`. All Jsonification exceptions inherit from `JsonException`, which means you can isolate and handle JSON processing errors easily.
+
+    String tweet;
+    try {
+        tweet = o.get("status").asObject().get("text").asScalar().asString().stringVal();
+    }
+    catch(JsonNullException e) {
+        // Oops! One of the values we dereferenced above was a JSON null.
+        tweet = null;
+    }
+    catch(JsonException e) {
+        // Oops! Some other JSON processing-related exception has occurred.
+        tweet = null;
+    }
 
 ## Reading JSON
 
@@ -209,3 +248,12 @@ In this mode, Jsonification will generate a JSON document to an underlying strea
 ## Manipulating JSON Trees
 
 Jsonification's `JsonValue` class was carefully designed to make manipulating JSON simple and natural. Custom `JsonExceptions` are used (as opposed to builtin exceptions like `NullPointerException` or `ClassCastException`) to make it easier for the user to recognize and fix issues related to JSON processing (as opposed to errors in other program logic) quickly.
+
+For example, if you were working directly with the [Twitter REST API](https://dev.twitter.com/rest/public) and had just received [an API response containing a user object](https://dev.twitter.com/rest/reference/get/users/show), then this snippet would allow you to pull out specific fields quickly:
+
+    String userJsonResponse=getUserDataFromTwitter("twitterdev");
+    JsonObject o=Json.parse(userJsonResponse).asObject();
+    long id=o.get("id").asScalar().asNumber().longVal(); // 2244994945
+    String screenName=o.get("screen_name").asScalar().asString().stringVal();
+    int followers=o.get("followers_count").asScalar().asNumber().intVal(); // 143916
+    boolean following=o.get("following").asScalar().asBoolean().booleanVal(); // false
