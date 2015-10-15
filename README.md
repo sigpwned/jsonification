@@ -1,8 +1,8 @@
 # Jsonification
-JSON is a simple data format. Working with JSON should be simple, too. Jsonification tries to make working with JSON in Java simple and natural, no matter what your task or program architecture is.
+JSON is a simple data format. Working with JSON should be simple, too. Jsonification is a simple, dependency-free JSON processing library that tries to make working with JSON in Java simple and natural, no matter what your task or program architecture is.
 
 ## Overview
-Jsonification provides ways to parse and emit JSON incrementally, which is perfect for working with large JSON documents, or as a tree, which makes manipulating small JSON documents like API responses a snap. For example, parsing [an example Twitter API response](https://dev.twitter.com/rest/reference/get/users/show) and pulling out a few fields is just a few simple lines of code:
+Jsonification provides ways to parse and emit JSON incrementally, which is perfect for working with large JSON documents, or as a tree, which makes manipulating small JSON documents like API responses a senap. For example, parsing [an example Twitter API response](https://dev.twitter.com/rest/reference/get/users/show) and pulling out a few fields is just a few simple lines of code:
 
     String userJsonResponse=getUserDataFromTwitter("twitterdev");
     JsonObject o=Json.parse(userJsonResponse).asObject();
@@ -11,7 +11,7 @@ Jsonification provides ways to parse and emit JSON incrementally, which is perfe
     int followers=o.get("followers_count").asScalar().asNumber().intVal(); // 143916
     boolean following=o.get("following").asScalar().asBoolean().booleanVal(); // false
     
-If you're working with JSON trees, Jsonification also makes working with JSON `null` -- a common difficulty in other libraries -- by representing it with a custom value instead of using Java's native `null` value. This allows you to manipulate JSON without worrying about `NullPointerException`s. To continue the above example, these are all ways you could determine if the user has ever sent a tweet by checking if the user's most recent tweet exists:
+If you're working with JSON trees, Jsonification also makes working with JSON `null` -- a common difficulty in other libraries -- by representing it with a custom value instead of using Java's native `null` value. This allows you to manipulate JSON without worrying about `NullPointerException`s. To continue the above example, these are all ways you could determine if the user has ever sent a tweet by checking if the user's most recent tweet is `null`:
 
     if(o.get("status").isNull()) {
         // The user has never tweeted
