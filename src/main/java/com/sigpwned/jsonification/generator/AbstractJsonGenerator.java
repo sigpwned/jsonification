@@ -234,7 +234,7 @@ public abstract class AbstractJsonGenerator implements AutoCloseable, JsonGenera
     @Override
     public void value(String name, JsonValue value) throws IOException {
         if(name != null)
-            setNextName(name);
+            nextName(name);
         try {
             new JsonWalker(value).walk(JsonWalkers.newGeneratorHandler(this));
         }
@@ -247,14 +247,14 @@ public abstract class AbstractJsonGenerator implements AutoCloseable, JsonGenera
     }
     
     @Override
-    public void setNextName(String nextName) {
-        if(getNextName()!=null && nextName!=null && !getNextName().equals(nextName))
-            throw new GenerateJsonException("Cannot reset nextName to different value: "+getNextName()+" to "+nextName);
+    public void nextName(String nextName) {
+        if(nextName()!=null && nextName!=null && !nextName().equals(nextName))
+            throw new GenerateJsonException("Cannot reset nextName to different value: "+nextName()+" to "+nextName);
         this.nextName = nextName;
     }
 
     @Override
-    public String getNextName() {
+    public String nextName() {
         return nextName;
     }
 

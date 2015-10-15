@@ -66,9 +66,9 @@ public interface JsonGenerator extends AutoCloseable {
 
     public void value(String name, JsonValue value) throws IOException;
 
-    public void setNextName(String nextName);
+    public void nextName(String nextName);
 
-    public String getNextName();
+    public String nextName();
     
     public void close() throws IOException;
 
