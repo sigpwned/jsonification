@@ -27,6 +27,10 @@ homebody/
 *.o
 *.so
 
+# Maven #
+#########
+*.versionsBackup
+
 # Packages #
 ############
 # it's better to unpack these files and commit the raw source
