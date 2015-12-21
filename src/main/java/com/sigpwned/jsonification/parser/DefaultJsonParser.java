@@ -375,10 +375,121 @@ public class DefaultJsonParser implements AutoCloseable, JsonParser {
         return result;
     }
     
+    private Token peek1(int cp) throws IOException {
+        switch(cp) {
+        case -1:
+            peek = new Token(Token.Type.EOF, "$");
+            break;
+        case '{':
+            peek = new Token(Token.Type.OPEN_OBJECT, "{");
+            break;
+        case '}':
+            peek = new Token(Token.Type.CLOSE_OBJECT, "}");
+            break;
+        case '[':
+            peek = new Token(Token.Type.OPEN_ARRAY, "[");
+            break;
+        case ']':
+            peek = new Token(Token.Type.CLOSE_ARRAY, "]");
+            break;
+        case ':':
+            peek = new Token(Token.Type.COLON, ":");
+            break;
+        case ',':
+            peek = new Token(Token.Type.COMMA, ",");
+            break;
+        case 't':
+            peek = keywordOrSymbol(Token.Type.TRUE, cp, "rue");
+            break;
+        case 'f':
+            peek = keywordOrSymbol(Token.Type.FALSE, cp, "alse");
+            break;
+        case 'n':
+            peek = keywordOrSymbol(Token.Type.NULL, cp, "ull");
+            break;
+        case '"':
+        {
+            StringBuilder buf=new StringBuilder();
+            for(cp=getch();cp!='"';cp=getch()) {
+                if(cp == -1)
+                    throw new ParseJsonException("Unexpected EOF in string constant");
+                else
+                if(cp == '\\') {
+                    int cp2=getch();
+                    if(cp2 == -1)
+                        throw new ParseJsonException("Unexpected EOF in escape sequence in string constant");
+                    else
+                    if(cp2 == '"')
+                        buf.append('"');
+                    else
+                    if(cp2 == '\\')
+                        buf.append('\\');
+                    else
+                    if(cp2 == '/')
+                        buf.append('/');
+                    else
+                    if(cp2 == 'b')
+                        buf.append('\b');
+                    else
+                    if(cp2 == 'f')
+                        buf.append('\f');
+                    else
+                    if(cp2 == 'n')
+                        buf.append('\n');
+                    else
+                    if(cp2 == 'r')
+                        buf.append('\r');
+                    else
+                    if(cp2 == 't')
+                        buf.append('\t');
+                    else
+                    if(cp2 == 'u') {
+                        StringBuilder ubuf=new StringBuilder();
+                        for(int i=0;i<4;i++) {
+                            int u=getch();
+                            if(u>='0' && u<='9')
+                                ubuf.append((char) u);
+                            else
+                            if(u>='a' && u<='f')
+                                ubuf.append((char) u);
+                            else
+                            if(u>='A' && u<='F')
+                                ubuf.append((char) u);
+                            else
+                                throw new ParseJsonException("Invalid character in unicode escape sequence in string constant: \\u"+ubuf.toString()+new String(Character.toChars(u)));
+                        }
+                        int uval=Integer.parseInt(ubuf.toString(), 16);
+                        buf.append((char)(uval & 0xFFFF));
+                    }
+                    else
+                        throw new ParseJsonException("Invalid escape sequence in string constant: \\"+new String(Character.toChars(cp2)));
+                }
+                else
+                    buf.appendCodePoint(cp);
+            }
+            peek = new Token(Token.Type.STRING, buf.toString());
+        } break;
+        case '-':
+        case '.':
+            peek = number(cp);
+            break;
+        case '_':
+        case '$':
+            peek = symbol(cp);
+            break;
+        default:
+            if(Character.isLetter(cp))
+                peek = symbol(cp);
+            else
+                throw new ParseJsonException("Unrecognized character: "+new String(Character.toChars(cp)));
+        }
+        return peek;
+    }
+    
     private Token peek() throws IOException {
         if(peek == null) {
             int cp=getch();
-            while(Character.isSpaceChar(cp))
+            while(Character.isWhitespace(cp))
                 cp = getch();
             
             // We use this somewhat complex approach to tokenizing because a
@@ -395,113 +506,7 @@ public class DefaultJsonParser implements AutoCloseable, JsonParser {
                 peek = symbol(cp);
             }
             else {
-                switch(cp) {
-                case -1:
-                    peek = new Token(Token.Type.EOF, "$");
-                    break;
-                case '{':
-                    peek = new Token(Token.Type.OPEN_OBJECT, "{");
-                    break;
-                case '}':
-                    peek = new Token(Token.Type.CLOSE_OBJECT, "}");
-                    break;
-                case '[':
-                    peek = new Token(Token.Type.OPEN_ARRAY, "[");
-                    break;
-                case ']':
-                    peek = new Token(Token.Type.CLOSE_ARRAY, "]");
-                    break;
-                case ':':
-                    peek = new Token(Token.Type.COLON, ":");
-                    break;
-                case ',':
-                    peek = new Token(Token.Type.COMMA, ",");
-                    break;
-                case 't':
-                    peek = keywordOrSymbol(Token.Type.TRUE, cp, "rue");
-                    break;
-                case 'f':
-                    peek = keywordOrSymbol(Token.Type.FALSE, cp, "alse");
-                    break;
-                case 'n':
-                    peek = keywordOrSymbol(Token.Type.NULL, cp, "ull");
-                    break;
-                case '"':
-                {
-                    StringBuilder buf=new StringBuilder();
-                    for(cp=getch();cp!='"';cp=getch()) {
-                        if(cp == -1)
-                            throw new ParseJsonException("Unexpected EOF in string constant");
-                        else
-                        if(cp == '\\') {
-                            int cp2=getch();
-                            if(cp2 == -1)
-                                throw new ParseJsonException("Unexpected EOF in escape sequence in string constant");
-                            else
-                            if(cp2 == '"')
-                                buf.append('"');
-                            else
-                            if(cp2 == '\\')
-                                buf.append('\\');
-                            else
-                            if(cp2 == '/')
-                                buf.append('/');
-                            else
-                            if(cp2 == 'b')
-                                buf.append('\b');
-                            else
-                            if(cp2 == 'f')
-                                buf.append('\f');
-                            else
-                            if(cp2 == 'n')
-                                buf.append('\n');
-                            else
-                            if(cp2 == 'r')
-                                buf.append('\r');
-                            else
-                            if(cp2 == 't')
-                                buf.append('\t');
-                            else
-                            if(cp2 == 'u') {
-                                StringBuilder ubuf=new StringBuilder();
-                                for(int i=0;i<4;i++) {
-                                    int u=getch();
-                                    if(u>='0' && u<='9')
-                                        ubuf.append((char) u);
-                                    else
-                                    if(u>='a' && u<='f')
-                                        ubuf.append((char) u);
-                                    else
-                                    if(u>='A' && u<='F')
-                                        ubuf.append((char) u);
-                                    else
-                                        throw new ParseJsonException("Invalid character in unicode escape sequence in string constant: \\u"+ubuf.toString()+new String(Character.toChars(u)));
-                                }
-                                int uval=Integer.parseInt(ubuf.toString(), 16);
-                                buf.append((char)(uval & 0xFFFF));
-                            }
-                            else
-                                throw new ParseJsonException("Invalid escape sequence in string constant: \\"+new String(Character.toChars(cp2)));
-                        }
-                        else
-                            buf.appendCodePoint(cp);
-                    }
-                    peek = new Token(Token.Type.STRING, buf.toString());
-                } break;
-                case '-':
-                case '.':
-                    peek = number(cp);
-                    break;
-                case '_':
-                case '$':
-                    peek = symbol(cp);
-                    break;
-                default:
-                    if(Character.isLetter(cp))
-                        peek = symbol(cp);
-                    else
-                        throw new ParseJsonException("Unrecognized character: "+new String(Character.toChars(cp)));
-                }
+                peek = peek1(cp);
             }
         }
         return peek;
