@@ -59,6 +59,10 @@ public interface JsonNull extends JsonBoolean, JsonNumber, JsonString, JsonObjec
             throw new NullJsonException();
         }
 
+        public float floatVal() {
+            throw new NullJsonException();
+        }
+
         public String getStringValue() {
             return null;
         }

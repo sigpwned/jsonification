@@ -24,5 +24,7 @@ public interface JsonNumber extends ScalarJsonValue {
     
     public long longVal();
     
+    public float floatVal();
+    
     public double doubleVal();
 }

@@ -70,6 +70,11 @@ public final class DefaultJsonNumber extends AbstractScalarJsonValue implements 
     }
 
     @Override
+    public float floatVal() {
+        return getNumberValue().floatValue();
+    }
+
+    @Override
     public int intVal() {
         return getNumberValue().intValue();
     }
