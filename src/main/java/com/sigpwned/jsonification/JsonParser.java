@@ -43,8 +43,15 @@ public interface JsonParser extends AutoCloseable {
      * JSON value is one complete scalar, object, array, or nil. If the given
      * input contains more than one complete JSON value, only the first is
      * parsed.
+     * 
+     * @param handler the handler to receive parse events
+     * 
+     * @return {@code true} if a value is parsed, or {@code false} otherwise
+     * 
+     * @throws IOException if an underlying {@code IOException} occurs while
+     *         reading JSON
      */
-    public boolean parse(JsonParser.Handler delegate) throws IOException;
+    public boolean parse(JsonParser.Handler handler) throws IOException;
 
     public void next(JsonParser.Handler handler) throws IOException;
 

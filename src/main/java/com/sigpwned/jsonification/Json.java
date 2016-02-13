@@ -42,6 +42,13 @@ public class Json {
      * Reads one {@link JsonValue} from the given {@code Reader} and returns
      * it. If more than one JSON value is contained in the given text, then
      * only the first is parsed. The given {@code Reader} is left open.
+     * 
+     * @param reader The {@link Reader} from which to read JSON
+     * 
+     * @return the {@code JsonValue} that was read
+     * 
+     * @throws IOException if an underlying {@code IOException} occurs while
+     *         reading JSON
      */
     public static JsonValue parse(Reader reader) throws IOException {
         JsonValue result;
@@ -55,6 +62,10 @@ public class Json {
      * Reads one {@link JsonValue} from the given {@code String} and returns
      * it. If more than one JSON value is contained in the given text, then
      * only the first is parsed.
+     * 
+     * @param text The {@link String} from which to read JSON
+     * 
+     * @return the {@code JsonValue} that was read
      */
     public static JsonValue parse(String text) {
         JsonValue result;
@@ -76,6 +87,17 @@ public class Json {
      * Parses JSON from the given {@code String}. If more than one JSON value
      * is contained in the given text, only the first is parsed. The given
      * {@code Reader} is left open.
+     * 
+     * @param reader The {@link Reader} from which to read JSON
+     * 
+     * @param handler The {@link JsonParser.Handler} to receive parse events
+     * 
+     * @return {@code true} if a value was read, or {@code false} otherwise.
+     * 
+     * @see JsonParser#parse(com.sigpwned.jsonification.JsonParser.Handler)
+     * 
+     * @throws IOException if an underlying {@code IOException} occurs while
+     *         reading JSON
      */
     public static boolean parse(Reader reader, JsonParser.Handler handler) throws IOException {
         boolean result;
@@ -88,6 +110,13 @@ public class Json {
     /**
      * Parses JSON from the given {@code String}. If more than one JSON value
      * is contained in the given text, only the first is parsed. 
+     * 
+     * @param text The {@link String} from which to read JSON
+     * @param handler The {@link JsonParser.Handler} to receive parse events
+     * 
+     * @return {@code true} if a value was read, or {@code false} otherwise.
+     * 
+     * @see JsonParser#parse(com.sigpwned.jsonification.JsonParser.Handler)
      */
     public static boolean parse(String text, JsonParser.Handler handler) {
         boolean result;
@@ -106,6 +135,10 @@ public class Json {
     
     /**
      * Converts the given {@link JsonValue} to a {@code String} in JSON format.
+     * 
+     * @param tree the {@code JsonValue} to emit
+     * 
+     * @return the {@code JsonValue} converted to a valid JSON string
      */
     public static String emit(JsonValue tree) {
         StringWriter result=new StringWriter();
@@ -128,14 +161,40 @@ public class Json {
     
     private static AtomicReference<JsonFactory> defaultFactory=new AtomicReference<JsonFactory>(new DefaultJsonFactory());
     
+    /**
+     * @return the current default {@link JsonFactory} used by constructor
+     *         methods. This method is thread-safe.
+     * 
+     * @see #newObject()
+     * @see #newArray()
+     * @see #newValue(boolean)
+     * @see #newValue(double)
+     * @see #newValue(long)
+     * @see #newValue(String)
+     */
     public static JsonFactory getDefaultFactory() {
         return defaultFactory.get();
     }
     
-    public static void setDefaultFactory(JsonFactory defaultFactory) {
+    /**
+     * Sets the current default {@link JsonFactory} used by constructor
+     * methods. This method is thread-safe.
+     * 
+     * @param defaultFactory the new {@code JsonFactory}
+     * 
+     * @return the old default {@code JsonFactory}
+     * 
+     * @see #newObject()
+     * @see #newArray()
+     * @see #newValue(boolean)
+     * @see #newValue(double)
+     * @see #newValue(long)
+     * @see #newValue(String)
+     */
+    public static JsonFactory setDefaultFactory(JsonFactory defaultFactory) {
         if(defaultFactory == null)
             throw new NullPointerException();
-        Json.defaultFactory.set(defaultFactory);
+        return Json.defaultFactory.getAndSet(defaultFactory);
     }
     
     public static JsonObject newObject() {

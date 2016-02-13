@@ -31,9 +31,9 @@ public interface JsonObject extends JsonValue {
     }
     
     /**
-     * Returns the {@code JsonValue} associated with the given {@code name}, or
-     * {@code null} if no such value exists.
      * @param name The name of the value to retrieve
+     * @return the {@code JsonValue} associated with the given {@code name}, or
+     *         {@code null} if no such value exists.
      */
     public JsonValue get(String name);
 
@@ -49,7 +49,7 @@ public interface JsonObject extends JsonValue {
     public void set(String name, JsonValue value);
     
     /**
-     * Associates a new {@link com.sigpwned.jsonification.JsonBoolean}
+     * Associates a new {@link com.sigpwned.jsonification.value.scalar.JsonBoolean}
      * representing {@code value} with {@code name} in this object. If
      * {@code name} was not already associated with a value in this object, it
      * is added.
@@ -60,7 +60,7 @@ public interface JsonObject extends JsonValue {
     public void set(String name, boolean value);
     
     /**
-     * Associates a new {@link com.sigpwned.jsonification.JsonNumber}
+     * Associates a new {@link com.sigpwned.jsonification.value.scalar.JsonNumber}
      * representing {@code value} with {@code name} in this object. If
      * {@code name} was not already associated with a value in this object, it
      * is added.
@@ -71,7 +71,7 @@ public interface JsonObject extends JsonValue {
     public void set(String name, long value);
     
     /**
-     * Associates a new {@link com.sigpwned.jsonification.JsonNumber}
+     * Associates a new {@link com.sigpwned.jsonification.value.scalar.JsonNumber}
      * representing {@code value} with {@code name} in this object. If
      * {@code name} was not already associated with a value in this object, it
      * is added.
@@ -82,7 +82,7 @@ public interface JsonObject extends JsonValue {
     public void set(String name, double value);
     
     /**
-     * Associates a new {@link com.sigpwned.jsonification.JsonString}
+     * Associates a new {@link com.sigpwned.jsonification.value.scalar.JsonString}
      * representing {@code value} with {@code name} in this object. If
      * {@code name} was not already associated with a value in this object, it
      * is added. If {@code value} is {@code null}, then it is stored as
@@ -94,10 +94,9 @@ public interface JsonObject extends JsonValue {
     public void set(String name, String value);
     
     /**
-     * Returns {@code true} if the given {@code name} is associated with a
-     * value in this object, or {@code false} otherwise. 
-     * 
      * @param name The name to test
+     * @return {@code true} if the given {@code name} is associated with a
+     *         value in this object, or {@code false} otherwise
      */
     public boolean has(String name);
     
@@ -112,24 +111,31 @@ public interface JsonObject extends JsonValue {
     public JsonValue remove(String name);
     
     /**
-     * The {@link Set} of all names associated with values in this object.
-     * The order of the keys in the set is undefined by default. 
+     * @return {@link Set} of all names associated with values in this object.
+     *         The order of the keys in the set is undefined by default.
+     *         Defined key orderings can be achieved by using a custom
+     *         {@link com.sigpwned.jsonification.JsonFactory} implementation.
      */
     public Set<String> keys();
     
     /**
-     * The {@link Collection} of all values associated with names in this
-     * object. The order of the values in the set is undefined by default.
+     * @return {@link Collection} of all values associated with names in this
+     *         object. The order of the values in the set is undefined by
+     *         default. Defined key orderings can be achieved by using a custom
+     *         {@link com.sigpwned.jsonification.JsonFactory} implementation.
      */
     public Collection<JsonValue> values();
     
     /**
-     * A sequence of the name/value pairs contained in this object.
+     * @return A sequence of the name/value pairs contained in this object. The
+     *         order of the values in the set is undefined by default. Defined
+     *         sequence orderings can be achieved by using a custom
+     *         {@link com.sigpwned.jsonification.JsonFactory} implementation.
      */
     public Iterable<JsonObject.Entry> entries();
     
     /**
-     * The number of associated name/value pairs in this object.
+     * @return the number of associated name/value pairs in this object.
      */
     public int size();
 }
