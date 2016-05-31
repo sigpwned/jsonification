@@ -138,8 +138,11 @@ public class DefaultJsonEventParser implements AutoCloseable, JsonEventParser {
     public JsonEvent nil(String name) throws IOException {
         JsonEvent e=next();
         
-        if(e.getType() != JsonEvent.Type.NULL)
-            throw parseException(JsonEvent.Type.NULL, e.getType());
+        if(e.getType() != JsonEvent.Type.SCALAR)
+            throw parseException(JsonEvent.Type.SCALAR, e.getType());
+        else
+        if(!e.getValue().isNull())
+            throw parseException("nil", e.getValue().getType().name());
         
         name = name(name);
         if(!Objects.equals(name, e.getName()))

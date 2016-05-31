@@ -131,7 +131,6 @@ public class DefaultJsonTreeParser implements AutoCloseable, JsonTreeParser {
                         break loop;
                     }
                 } break;
-                case NULL:
                 case SCALAR:
                 {
                     if(scopes.size() == 0) {
