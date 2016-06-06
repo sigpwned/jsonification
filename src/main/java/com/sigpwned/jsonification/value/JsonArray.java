@@ -31,15 +31,15 @@ public interface JsonArray extends JsonValue, Iterable<JsonValue> {
     
     public JsonValue set(int index, String value) throws IndexOutOfBoundsJsonException;
     
-    public void add(JsonValue value);
+    public JsonArray add(JsonValue value);
     
-    public void add(boolean value);
+    public JsonArray add(boolean value);
     
-    public void add(long value);
+    public JsonArray add(long value);
     
-    public void add(double value);
+    public JsonArray add(double value);
     
-    public void add(String value);
+    public JsonArray add(String value);
     
     public void add(int index, JsonValue value) throws IndexOutOfBoundsJsonException;
     

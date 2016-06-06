@@ -69,7 +69,7 @@ public final class DefaultJsonObject extends AbstractJsonValue implements JsonOb
     }
     
     @Override
-    public JsonObject asObject() {
+    public DefaultJsonObject asObject() {
         return this;
     }
 
@@ -84,28 +84,29 @@ public final class DefaultJsonObject extends AbstractJsonValue implements JsonOb
     }
 
     @Override
-    public void set(String name, JsonValue value) {
+    public DefaultJsonObject set(String name, JsonValue value) {
         values.put(name, value!=null ? value : Json.NULL);
+        return this;
     }
     
     @Override
-    public void set(String name, boolean value) {
-        set(name, DefaultJsonBoolean.valueOf(value));
+    public DefaultJsonObject set(String name, boolean value) {
+        return set(name, DefaultJsonBoolean.valueOf(value));
     }
 
     @Override
-    public void set(String name, long value) {
-        set(name, DefaultJsonNumber.valueOf(value));
+    public DefaultJsonObject set(String name, long value) {
+        return set(name, DefaultJsonNumber.valueOf(value));
     }
 
     @Override
-    public void set(String name, double value) {
-        set(name, DefaultJsonNumber.valueOf(value));
+    public DefaultJsonObject set(String name, double value) {
+        return set(name, DefaultJsonNumber.valueOf(value));
     }
 
     @Override
-    public void set(String name, String value) {
-        set(name, DefaultJsonString.valueOf(value));
+    public DefaultJsonObject set(String name, String value) {
+        return set(name, DefaultJsonString.valueOf(value));
     }
 
     @Override

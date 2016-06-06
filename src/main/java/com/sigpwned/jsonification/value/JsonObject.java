@@ -46,7 +46,7 @@ public interface JsonObject extends JsonValue {
      * @param name The name to associate with the given value
      * @param value The value to associate
      */
-    public void set(String name, JsonValue value);
+    public JsonObject set(String name, JsonValue value);
     
     /**
      * Associates a new {@link com.sigpwned.jsonification.value.scalar.JsonBoolean}
@@ -57,7 +57,7 @@ public interface JsonObject extends JsonValue {
      * @param name The name to associate with the given value
      * @param value The value to associate
      */
-    public void set(String name, boolean value);
+    public JsonObject set(String name, boolean value);
     
     /**
      * Associates a new {@link com.sigpwned.jsonification.value.scalar.JsonNumber}
@@ -68,7 +68,7 @@ public interface JsonObject extends JsonValue {
      * @param name The name to associate with the given value
      * @param value The value to associate
      */
-    public void set(String name, long value);
+    public JsonObject set(String name, long value);
     
     /**
      * Associates a new {@link com.sigpwned.jsonification.value.scalar.JsonNumber}
@@ -79,7 +79,7 @@ public interface JsonObject extends JsonValue {
      * @param name The name to associate with the given value
      * @param value The value to associate
      */
-    public void set(String name, double value);
+    public JsonObject set(String name, double value);
     
     /**
      * Associates a new {@link com.sigpwned.jsonification.value.scalar.JsonString}
@@ -91,7 +91,7 @@ public interface JsonObject extends JsonValue {
      * @param name The name to associate with the given value
      * @param value The value to associate
      */
-    public void set(String name, String value);
+    public JsonObject set(String name, String value);
     
     /**
      * @param name The name to test

@@ -75,7 +75,7 @@ public interface JsonNull extends JsonBoolean, JsonNumber, JsonString, JsonObjec
             throw new NullJsonException();
         }
 
-        public void set(String name, JsonValue value) {
+        public JsonObject set(String name, JsonValue value) {
             throw new NullJsonException();
         }
 
@@ -103,7 +103,7 @@ public interface JsonNull extends JsonBoolean, JsonNumber, JsonString, JsonObjec
             throw new NullJsonException();
         }
 
-        public void add(JsonValue value) {
+        public JsonArray add(JsonValue value) {
             throw new NullJsonException();
         }
 
@@ -160,42 +160,42 @@ public interface JsonNull extends JsonBoolean, JsonNumber, JsonString, JsonObjec
         }
 
         @Override
-        public void set(String name, boolean value) {
+        public JsonObject set(String name, boolean value) {
             throw new NullJsonException();
         }
 
         @Override
-        public void set(String name, long value) {
+        public JsonObject set(String name, long value) {
             throw new NullJsonException();
         }
 
         @Override
-        public void set(String name, double value) {
+        public JsonObject set(String name, double value) {
             throw new NullJsonException();
         }
 
         @Override
-        public void set(String name, String value) {
+        public JsonObject set(String name, String value) {
             throw new NullJsonException();
         }
 
         @Override
-        public void add(boolean value) {
+        public JsonArray add(boolean value) {
             throw new NullJsonException();
         }
 
         @Override
-        public void add(long value) {
+        public JsonArray add(long value) {
             throw new NullJsonException();
         }
 
         @Override
-        public void add(double value) {
+        public JsonArray add(double value) {
             throw new NullJsonException();
         }
 
         @Override
-        public void add(String value) {
+        public JsonArray add(String value) {
             throw new NullJsonException();
         }
 

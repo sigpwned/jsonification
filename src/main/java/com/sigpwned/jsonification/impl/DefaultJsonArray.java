@@ -39,7 +39,7 @@ public final class DefaultJsonArray extends AbstractJsonValue implements JsonArr
     }
     
     @Override
-    public JsonArray asArray() {
+    public DefaultJsonArray asArray() {
         return this;
     }
 
@@ -98,28 +98,29 @@ public final class DefaultJsonArray extends AbstractJsonValue implements JsonArr
     }
     
     @Override
-    public void add(JsonValue value) {
+    public DefaultJsonArray add(JsonValue value) {
         values.add(value!=null ? value : Json.NULL);
+        return this;
     }
 
     @Override
-    public void add(boolean value) {
-        add(DefaultJsonBoolean.valueOf(value));
+    public DefaultJsonArray add(boolean value) {
+        return add(DefaultJsonBoolean.valueOf(value));
     }
 
     @Override
-    public void add(long value) {
-        add(DefaultJsonNumber.valueOf(value));
+    public DefaultJsonArray add(long value) {
+        return add(DefaultJsonNumber.valueOf(value));
     }
 
     @Override
-    public void add(double value) {
-        add(DefaultJsonNumber.valueOf(value));
+    public DefaultJsonArray add(double value) {
+        return add(DefaultJsonNumber.valueOf(value));
     }
 
     @Override
-    public void add(String value) {
-        add(DefaultJsonString.valueOf(value));
+    public DefaultJsonArray add(String value) {
+        return add(DefaultJsonString.valueOf(value));
     }
 
     @Override
