@@ -10,11 +10,13 @@ import com.sigpwned.jsonification.JsonGenerator;
 import com.sigpwned.jsonification.JsonParser;
 import com.sigpwned.jsonification.JsonTreeGenerator;
 import com.sigpwned.jsonification.JsonTreeParser;
+import com.sigpwned.jsonification.JsonValue;
 import com.sigpwned.jsonification.generator.DefaultJsonGenerator;
 import com.sigpwned.jsonification.generator.DefaultJsonTreeGenerator;
 import com.sigpwned.jsonification.parser.DefaultJsonEventParser;
 import com.sigpwned.jsonification.parser.DefaultJsonParser;
 import com.sigpwned.jsonification.parser.DefaultJsonTreeParser;
+import com.sigpwned.jsonification.parser.DefaultJsonValueParser;
 import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonNull;
 import com.sigpwned.jsonification.value.JsonObject;
@@ -83,6 +85,11 @@ public class DefaultJsonFactory implements JsonFactory {
     @Override
     public JsonParser newParser(Reader input) throws IOException {
         return new DefaultJsonParser(input);
+    }
+    
+    @Override
+    public JsonParser newValueParser(JsonValue value) throws IOException {
+        return new DefaultJsonValueParser(value);
     }
 
     @Override

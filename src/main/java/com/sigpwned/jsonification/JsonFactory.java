@@ -28,6 +28,8 @@ public interface JsonFactory {
     
     public JsonParser newParser(Reader input) throws IOException;
     
+    public JsonParser newValueParser(JsonValue value) throws IOException;
+    
     public JsonEventParser newEventParser(Reader input) throws IOException;
     
     public JsonEventParser newEventParser(JsonParser parser) throws IOException;

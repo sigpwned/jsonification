@@ -4,7 +4,7 @@
 
   <groupId>com.sigpwned</groupId>
   <artifactId>jsonification</artifactId>
-  <version>3.0.3</version>
+  <version>3.0.4</version>
   <packaging>jar</packaging>
 
   <name>jsonification</name>
@@ -73,6 +73,7 @@
       </plugin>
       
       <!-- We want to publish to Maven Central -->
+      <!-- To deploy, see: http://central.sonatype.org/pages/apache-maven.html -->
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -83,7 +84,7 @@
           <nexusUrl>https://oss.sonatype.org/</nexusUrl>
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
-      </plugin>
+      </plugin>    
       
       <!-- We want to provide sources when we deploy -->
       <plugin>

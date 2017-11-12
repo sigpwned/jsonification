@@ -229,6 +229,10 @@ public class Json {
         return getDefaultFactory().newParser(input);
     }
 
+    public static JsonParser newValueParser(JsonValue value) throws IOException {
+        return getDefaultFactory().newValueParser(value);
+    }
+
     public static JsonEventParser newEventParser(Reader input) throws IOException {
         return getDefaultFactory().newEventParser(input);
     }
