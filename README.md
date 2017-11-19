@@ -199,6 +199,61 @@ In this mode, Jsonification will parse a single JSON document or fragment into a
     catch(IOException e) {
         // An I/O problem occurred
     }
+    
+### Value Model
+
+In this mode, Jsonification will generate parse events from an existing `JsonValue` as if they were being read from input. This approach allows users to construct values and play them back as events for consistency during serialization. Just like any other `JsonParser`, this parser can be converted into an event parser.
+
+    try {
+        try (JsonParser p=Json.newValueParser(value)) {
+            boolean parsed=p.parse(new JsonParser.Handler() {
+                @Override
+                public void openObject(String name) {
+                }
+
+                @Override
+                public void closeObject() {
+                }
+    
+                @Override
+                public void openArray(String name) {
+                }
+
+                @Override
+                public void closeArray() {
+                }
+
+                @Override
+                public void scalar(String name, boolean value) {
+                }
+
+                @Override
+                public void scalar(String name, long value) {
+                }
+
+                @Override
+                public void scalar(String name, double value) {
+                }
+
+                @Override
+                public void scalar(String name, String value) {
+                }
+
+                @Override
+                public void nil(String name) {
+                }
+            });
+            if(parsed) {
+                // One complete JSON value was successfully parsed from the input
+            }
+            else {
+                // EOF has been reached on the input
+            }
+        }
+    }
+    catch(IOException e) {
+        // An error occurred
+    }
 
 ## Writing JSON
 
