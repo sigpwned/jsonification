@@ -74,6 +74,8 @@
       
       <!-- We want to publish to Maven Central -->
       <!-- To deploy, see: http://central.sonatype.org/pages/apache-maven.html -->
+      <!-- To fix GPG "Inappropriate ioctl for device", see: https://github.com/keybase/keybase-issues/issues/1712 -->
+      <!-- Upshot: export GPG_TTY=$(tty) -->
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
