@@ -45,6 +45,7 @@ public interface JsonObject extends JsonValue {
      * 
      * @param name The name to associate with the given value
      * @param value The value to associate
+     * @return The current object, to chain invocations
      */
     public JsonObject set(String name, JsonValue value);
     
@@ -56,6 +57,7 @@ public interface JsonObject extends JsonValue {
      * 
      * @param name The name to associate with the given value
      * @param value The value to associate
+     * @return The current object, to chain invocations
      */
     public JsonObject set(String name, boolean value);
     
@@ -67,6 +69,7 @@ public interface JsonObject extends JsonValue {
      * 
      * @param name The name to associate with the given value
      * @param value The value to associate
+     * @return The current object, to chain invocations
      */
     public JsonObject set(String name, long value);
     
@@ -78,6 +81,7 @@ public interface JsonObject extends JsonValue {
      * 
      * @param name The name to associate with the given value
      * @param value The value to associate
+     * @return The current object, to chain invocations
      */
     public JsonObject set(String name, double value);
     
@@ -90,6 +94,7 @@ public interface JsonObject extends JsonValue {
      * 
      * @param name The name to associate with the given value
      * @param value The value to associate
+     * @return The current object, to chain invocations
      */
     public JsonObject set(String name, String value);
     

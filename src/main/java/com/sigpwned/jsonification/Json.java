@@ -268,7 +268,13 @@ public class Json {
     }
     
     /**
-     * @see https://stackoverflow.com/questions/113511/best-implementation-for-hashcode-method
+     * Generic hash code method for json values. Should be used by all
+     * implementations for cross-compatibility.
+     * 
+     * See https://stackoverflow.com/questions/113511/best-implementation-for-hashcode-method
+     * 
+     * @param v The value for which to determine the hash code
+     * @return The hash code for the given value
      */
     public static int hashCode(JsonValue v) {
         if(v == null)
@@ -324,6 +330,14 @@ public class Json {
         return result;
     }
     
+    /**
+     * Generic equals method for json values. Should be used by all
+     * implementations for cross-compatibility.
+     * 
+     * @param a First value to compare for equality
+     * @param b Second value to compare for equality
+     * @return true if the objects are equal, or false otherwise
+     */
     public static boolean equals(JsonValue a, JsonValue b) {
         boolean result;
         
