@@ -1,5 +1,6 @@
 package com.sigpwned.jsonification.impl;
 
+import com.sigpwned.jsonification.Json;
 import com.sigpwned.jsonification.JsonValue;
 import com.sigpwned.jsonification.exception.ClassCastJsonException;
 import com.sigpwned.jsonification.value.JsonArray;
@@ -43,5 +44,30 @@ import com.sigpwned.jsonification.value.ScalarJsonValue;
     @Override
     public ScalarJsonValue asScalar() {
         throw new ClassCastJsonException(this, JsonValue.Type.SCALAR);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Json.hashCode(this);
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        boolean result;
+
+        if(this == other)
+            result = true;
+        else
+        if(other == null)
+            result = false;
+        else
+        if(other instanceof JsonValue) {
+            JsonValue that=(JsonValue) other;
+            result = Json.equals(this, that);
+        }
+        else
+            result = false;
+        
+        return result;
     }
 }

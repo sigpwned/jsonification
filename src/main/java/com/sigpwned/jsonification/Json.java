@@ -5,6 +5,10 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Objects;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.sigpwned.jsonification.impl.DefaultJsonFactory;
@@ -12,6 +16,7 @@ import com.sigpwned.jsonification.io.IgnoreCloseReader;
 import com.sigpwned.jsonification.value.JsonArray;
 import com.sigpwned.jsonification.value.JsonNull;
 import com.sigpwned.jsonification.value.JsonObject;
+import com.sigpwned.jsonification.value.ScalarJsonValue;
 import com.sigpwned.jsonification.value.scalar.JsonBoolean;
 import com.sigpwned.jsonification.value.scalar.JsonNumber;
 import com.sigpwned.jsonification.value.scalar.JsonString;
@@ -260,5 +265,136 @@ public class Json {
 
     public static JsonTreeGenerator newTreeGenerator() throws IOException {
         return getDefaultFactory().newTreeGenerator();
+    }
+    
+    /**
+     * @see https://stackoverflow.com/questions/113511/best-implementation-for-hashcode-method
+     */
+    public static int hashCode(JsonValue v) {
+        if(v == null)
+            throw new NullPointerException();
+            
+        int result;
+        
+        switch(v.getType()) {
+        case ARRAY:
+        {
+            JsonArray av=v.asArray();
+            result = 0;
+            for(JsonValue element : av)
+                result = 37*result + element.hashCode();
+        } break;
+        case NULL:
+            result = 0;
+            break;
+        case OBJECT:
+        {
+            JsonObject ov=v.asObject();
+            result = 0;
+            SortedSet<String> keys=new TreeSet<String>(ov.keys());
+            for(String key : keys) {
+                int ecode=key.hashCode()+ov.get(key).hashCode();
+                result = 37*result + ecode;
+            }
+        } break;
+        case SCALAR:
+        {
+            ScalarJsonValue sv=v.asScalar();
+            switch(sv.getFlavor()) {
+            case BOOLEAN:
+                result = sv.asBoolean().booleanVal() ? 1 : 0;
+                break;
+            case NULL:
+                result = 0;
+                break;
+            case NUMBER:
+                result = sv.asNumber().getNumberValue().hashCode();
+                break;
+            case STRING:
+                result = sv.asString().getValue().hashCode();
+                break;
+            default:
+                throw new RuntimeException("unrecognized scalar value: "+sv);
+            }
+        } break;
+        default:
+            throw new RuntimeException("unrecognized value: "+v);
+        }
+        
+        return result;
+    }
+    
+    public static boolean equals(JsonValue a, JsonValue b) {
+        boolean result;
+        
+        if(a == b)
+            result = true;
+        else
+        if(a==null || b==null)
+            result = false;
+        else
+        if(a.isNull() && b.isNull())
+            result = true;
+        else
+        if(a.isNull() || b.isNull())
+            result = false;
+        else
+        if(a.getType() == b.getType()) {
+            JsonValue.Type type=a.getType();
+            switch(type) {
+            case ARRAY:
+            {
+                JsonArray aa=a.asArray(), ab=b.asArray();
+                if(aa.size() == ab.size()) {
+                    result = true;
+                    int size=aa.size();
+                    for(int i=0;i<size;i++) {
+                        result = Objects.equals(aa.get(i), ab.get(i));
+                        if(result == false)
+                            break;
+                    }
+                }
+                else
+                    result = false;
+            } break;
+            case NULL:
+                result = true;
+                break;
+            case OBJECT:
+            {
+                JsonObject oa=a.asObject(), ob=b.asObject();
+                if(oa.size() == ob.size()) {
+                    if(oa.keys().equals(ob.keys())) {
+                        result = true;
+                        Set<String> keys=oa.keys();
+                        for(String key : keys) {
+                            JsonValue ea=oa.get(key), eb=ob.get(key);
+                            result = Objects.equals(ea, eb);
+                            if(result == false)
+                                break;
+                        }
+                    }
+                    else
+                        result = false;
+                }
+                else
+                    result = false;
+            } break;
+            case SCALAR:
+            {
+                ScalarJsonValue sa=a.asScalar(), sb=b.asScalar();
+                if(sa.getFlavor() == sb.getFlavor())
+                    result = sa.getValue().equals(sb.getValue());
+                else
+                    result = false;
+            } break;
+            default:
+                throw new RuntimeException("unrecognized type: "+type);
+            }
+        }
+        else
+            result = false;
+        
+        return result;
     }
 }
