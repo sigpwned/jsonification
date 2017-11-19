@@ -312,3 +312,13 @@ For example, if you were working directly with the [Twitter REST API](https://de
     String screenName=o.get("screen_name").asScalar().asString().stringVal();
     int followers=o.get("followers_count").asScalar().asNumber().intVal(); // 143916
     boolean following=o.get("following").asScalar().asBoolean().booleanVal(); // false
+    
+## Maven
+
+The latest version of Jsonification is available from Maven Central at the following coordinates:
+
+    <dependency>
+        <groupId>com.sigpwned</groupId>
+        <artifactId>jsonification</artifactId>
+        <version>3.0.5</version>
+    </dependency>
