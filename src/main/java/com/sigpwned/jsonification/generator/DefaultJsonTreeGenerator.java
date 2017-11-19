@@ -38,7 +38,7 @@ public class DefaultJsonTreeGenerator extends AbstractJsonGenerator implements J
         switch(scope.type) {
         case OBJECT:
             top().name = name;
-            // Fall through...
+            //$FALL-THROUGH$
         case ROOT:
         case ARRAY:
             push(new Container(getFactory().newObject()));
@@ -58,7 +58,7 @@ public class DefaultJsonTreeGenerator extends AbstractJsonGenerator implements J
         switch(scope.type) {
         case OBJECT:
             top().name = name;
-            // Fall through...
+            //$FALL-THROUGH$
         case ROOT:
         case ARRAY:
             push(new Container(getFactory().newArray()));
@@ -78,7 +78,7 @@ public class DefaultJsonTreeGenerator extends AbstractJsonGenerator implements J
         switch(scope.type) {
         case OBJECT:
             top().name = name;
-            // Fall through...
+            //$FALL-THROUGH$
         case ROOT:
         case ARRAY:
             assign(Json.newValue(value));
@@ -93,7 +93,7 @@ public class DefaultJsonTreeGenerator extends AbstractJsonGenerator implements J
         switch(scope.type) {
         case OBJECT:
             top().name = name;
-            // Fall through...
+            //$FALL-THROUGH$
         case ROOT:
         case ARRAY:
             assign(Json.newValue(value));
@@ -108,7 +108,7 @@ public class DefaultJsonTreeGenerator extends AbstractJsonGenerator implements J
         switch(scope.type) {
         case OBJECT:
             top().name = name;
-            // Fall through...
+            //$FALL-THROUGH$
         case ROOT:
         case ARRAY:
             assign(Json.newValue(value));
@@ -123,7 +123,7 @@ public class DefaultJsonTreeGenerator extends AbstractJsonGenerator implements J
         switch(scope.type) {
         case OBJECT:
             top().name = name;
-            // Fall through...
+            //$FALL-THROUGH$
         case ROOT:
         case ARRAY:
             assign(Json.newValue(value));
@@ -138,7 +138,7 @@ public class DefaultJsonTreeGenerator extends AbstractJsonGenerator implements J
         switch(scope.type) {
         case OBJECT:
             top().name = name;
-            // Fall through...
+            //$FALL-THROUGH$
         case ROOT:
         case ARRAY:
             assign(Json.newNull());
