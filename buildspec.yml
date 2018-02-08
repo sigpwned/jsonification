@@ -3,12 +3,8 @@ version: 0.2
 phases:
   install:
     commands:
-      - apt-get update -y
-      - apt-get install -y awscli
   pre_build:
     commands:
-      - mkdir -p $HOME/.m2
-      - aws s3 cp s3://com.sigpwned.build/configuration/java/maven/settings.xml $HOME/.m2
   build:
     commands:
       - echo Build started on `date`
