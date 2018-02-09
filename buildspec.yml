@@ -15,6 +15,5 @@ phases:
       - mvn package
 artifacts:
   files:
-    - target/jsonification-3.0.5.jar
-    - target/jsonification-3.0.5-sources.jar
-    - target/jsonification-3.0.5-javadoc.jar
+    - '**/target/**/*.jar'
+    - '**/target/**/*.asc'
