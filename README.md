@@ -1,4 +1,4 @@
-# JSONIFICATION ![Build Status](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiZTVCSytLYTh1bzM4eFVSbWhiRTFROWtKQ09uS2RRSm44ZFRjWjBzSnFhU0pJODhTdWR2dlBXeGZoMXhiVEs0VnFrY2g1UE9XZFhXaTdETkhKRjRtbjJ3PSIsIml2UGFyYW1ldGVyU3BlYyI6ImhVWFArdS9DUUI0N2UwZEkiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master) #
+# JSONIFICATION ![Build Status](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiZTVCSytLYTh1bzM4eFVSbWhiRTFROWtKQ09uS2RRSm44ZFRjWjBzSnFhU0pJODhTdWR2dlBXeGZoMXhiVEs0VnFrY2g1UE9XZFhXaTdETkhKRjRtbjJ3PSIsIml2UGFyYW1ldGVyU3BlYyI6ImhVWFArdS9DUUI0N2UwZEkiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master) ![Test Coverage](target/jacoco.svg)
 
 JSON is a simple data format. Working with JSON should be simple,
 too. Jsonification is a simple, dependency-free JSON processing
