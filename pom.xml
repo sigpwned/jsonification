@@ -25,9 +25,10 @@
   
   <developers>
     <developer>
-      <id>aboothe</id>
+      <id>sigpwned</id>
       <name>Andy Boothe</name>
       <email>andy@sigpwned.com</email>
+      <url>http://sigpwned.com/</url>
       <roles>
         <role>architect</role>
         <role>developer</role>
